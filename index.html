@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://unpkg.com/survey-core@2.3.14/survey.core.min.js"></script>
+    <script src="https://unpkg.com/survey-core@2.3.14/survey.i18n.min.js"></script>
+    <script src="https://unpkg.com/survey-core@2.3.14/themes/index.min.js"></script>
+    <script src="https://unpkg.com/survey-js-ui@2.3.14/survey-js-ui.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/dist/markdown-it.min.js"></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/survey-core@2.3.14/survey-core.min.css" />
+    <link rel="stylesheet" href="./index.css" />
+</head>
+
+<body>
+
+    <div id="surveyContainer"
+        style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; min-height: 100%; height:100%"></div>
+
+    <script>
+
+        
+
+        // Helper: get a query parameter from URL
+        function getParam(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+
+        // Load CSV for given user ID
+        async function loadCSV(userId) {
+            const response = await fetch(`kassenzettel/${userId}.csv`);
+            if (!response.ok) throw new Error("Nutzer " + userId + " unbekannt!");
+            const text = await response.text();
+            return Papa.parse(text, { header: true }).data;
+        }
+
+        
+        var condition;
+        var total = 0;
+        var newtotal = 0;
+
+        function generateFormattedReceipt(items) {
+
+            width_name = 32;
+            width_price = 8;
+
+            lines = [
+                "Produkt".padEnd(width_name) + "Preis".padStart(width_price),
+                "-".repeat(width_name + width_price)
+            ]
+
+            var total = 0;
+
+            for (item of items){
+                lines.push(item.name.substring(0,34).padEnd(width_name) + (item.price.toFixed(2)+"").padStart(width_price));
+                total = total + item.price;
+            }
+
+            lines.push("-".repeat(width_name + width_price));
+            lines.push("<b>"+"Summe".padEnd(width_name) + total.toFixed(2).padStart(width_price)+"</b>")
+
+            return lines.join("\n");
+        }
+
+        function generateRecalculatedReceipt(items) {
+
+            width_name = 32;
+            width_price = 8;
+            width_newprice = 14
+
+            lines = [
+                "Produkt".padEnd(width_name) + "Preis".padStart(width_price) + "Neuer Preis".padStart(width_newprice),
+                "-".repeat(width_name + width_price + width_newprice)
+            ]
+
+
+            let counter = 0;
+            for (item of items){
+
+                counter++;
+
+                let color = "black";
+                if (item.newprice > item.price) {
+                    color = "red";
+                } else if (item.newprice < item.price) {
+                    color = "green";
+                }
+
+                lines.push(`<product no="${counter}" name="${item.name}">` + item.name.substring(0,34).padEnd(width_name) + (item.price.toFixed(2)+"").padStart(width_price) + `<span style='color:${color}; font-family: monospace; white-space: pre;'>` + (item.newprice.toFixed(2)+"").padStart(width_newprice) + "</span></product>");
+                total = total + item.price;
+                newtotal = total + item.newprice;
+            }
+
+            newtotal = Math.round(newtotal*100)/100; 
+
+            let color = "black";
+            if (newtotal > total) {
+                color = "red";
+            } else if (newtotal < total) {
+                color = "green";
+            }
+
+            lines.push("-".repeat(width_name + width_price + width_newprice));
+            lines.push("<b>"+"Summe".padEnd(width_name) + total.toFixed(2).padStart(width_price) + `<span style='color:${color}; font-family: monospace; white-space: pre; font-weight: bold;'>` + newtotal.toFixed(2).padStart(width_newprice)+"</span></b>")
+
+            return lines.join("\n");
+        }
+
+
+        async function initSurvey() {
+
+            const userId = getParam("id");
+            if (!userId) {
+                document.body.innerHTML = "<h3>❌ Fehlender URL-Parameter!</h3>";
+                return;
+            }
+
+            try {
+
+                 // randomly assign to one of two conditions and store in survey
+                var condition = Math.random();
+                var condition_description = "";
+                if (condition <= 0.3333) {
+                    condition = "increase";
+                    condition_description = "Erhöhung der Steuer auf Fleisch und Wurst, Fisch, Milchprodukte und Eier auf 19%, unveränderte Steuer auf Obst, Gemüse, Hülsenfrüchte und Nüsse von 7%";
+                } else if (condition <= 0.6667) {
+                    condition = "decrease";
+                    condition_description = "unveränderte Steuer auf Fleisch und Wurst, Fisch, Milchprodukte und Eier von 7%, Senkung der Steuer auf Obst, Gemüse, Hülsenfrüchte und Nüsse auf 0%";
+                } else {
+                    condition = "combo";
+                    condition_description = "Erhöhung der Steuer auf Fleisch und Wurst, Fisch, Milchprodukte und Eier auf 19%, Senkung der Steuer auf Obst, Gemüse, Hülsenfrüchte und Nüsse auf 0%";
+                }
+
+                // load receipt and create choices array
+                const receipt = await loadCSV(userId);
+                const productlist = receipt.map(p => {
+
+                    const name = p.NAME;
+                    const amount = parseInt(p.AMOUNT);
+                    const singleprice = parseFloat(p.PRICE.replace(',', '.'));
+                    const price = amount * singleprice;
+                    const tax = parseFloat(p.TAX)/100;
+                    const category = p.CATEGORY;
+                    var newprice;
+
+                    if ((condition == "increase" || condition == "combo") && category == "MD") {
+                        newprice = (price/(1+tax))*1.19;
+                    } else if ((condition == "decrease" || condition == "combo") && category == "FV") {
+                        newprice = (price/(1+tax));
+                    } else {
+                        newprice = price;
+                    }
+                    newprice = Math.round(newprice*100)/100; // cut new prices to two decimals
+            
+                    return {
+                        name: name,
+                        amount: amount,
+                        singleprice: singleprice,
+                        price: price,
+                        tax: tax,
+                        newprice: newprice
+                    }
+
+                });
+
+                const formattedreceipt = generateFormattedReceipt(productlist);
+                const recalculatedreceipt = generateRecalculatedReceipt(productlist);
+
+                // define SurveyJS model
+                const surveyJson = {
+                    pages: [
+                        {
+                            name: "consent",
+                            elements: [
+                                {
+                                    "type": "html",
+                                    "name": "briefing",
+                                    "html": "<h3>Herzlich willkommen!</h3><p>Schön, dass Sie wieder an einer Umfrage der Universität Bamberg teilnehmen. Sie haben uns vor einigen Wochen einen Kassenzettel geschickt. In dieser Umfrage möchten wir nun Ihre Meinung zu einer möglichen Veränderung der Mehrwertsteuer auf Lebensmittel erfassen. Die Teilnahme wird rund 5 Minuten dauern, ist freiwillig und kann jederzeit abgebrochen werden.</p><p>Ihre Angaben werden für wissenschaftliche Zwecke erhoben und können in anonymisierter Form dauerhaft in einem öffentlichen Repositorium abgelegt werden. Ein Rückschluss auf Ihre Person ist dabei keinesfalls möglich. Weitere Informationen zur Datenverarbeitung finden Sie <a href='https://www.uni-bamberg.de/datenschutz/datenschutzinformationen/allgemeine-inhalte-datenschutzinformationen/', target='_blank'>hier</a>. Sie können Ihre Zustimmung zur Datenverarbeitung jederzeit per Email an philipp.sprengholz@uni-bamberg.de widerrufen.</p>",
+                                    "startWithNewLine": false
+                                },
+                                {
+
+                                    "type": "boolean",
+                                    "name": "consent",
+                                    "title": "Einwilligungserklärung",
+                                    "labelTrue": "**Ja, ich möchte an der Umfrage teilnehmen** und willige in die Verarbeitung meiner Daten zum Zweck der wissenschaftlichen Forschung ein.",
+                                    "labelFalse": "**Nein, ich möchte nicht an der Umfrage teilnehmen.**",
+                                    "renderAs": "radio",
+                                    "isRequired": true,
+                                    "swapOrder": true
+                                }
+                            ]
+
+                        },
+                        {
+                            elements: [
+                                {
+                                    "type": "html",
+                                    "name": "policy-intro",
+                                    "html": "<p>Bitte stellen Sie sich folgendes vor:</p><p><b>Die Bundesregierung diskutiert darüber, die Steuersätze für Nahrungsmittel zu ändern.</b></p><p>Momentan werden pflanzenbasierten Lebensmittel wie Obst, Gemüse, Hülsenfrüchte und Nüsse aber auch tierische Lebensmittel wie Milch, Eier und Fleisch mit einem verminderten Mehrwertsteuersatz von 7% besteuert anstatt mit dem regulären Mehrwertsteuersatz von 19%.</p>",
+                                    "startWithNewLine": false
+                                },
+                                {
+                                    "type": "html",
+                                    "name": "policy-increase",
+                                    "html": "<b>Die Steueränderung sieht folgendes vor:<ul><li>Die Steuer auf pflanzliche Lebensmittel wie Obst, Gemüse, Hülsenfrüchte und Nüsse soll bei 7% bleiben.</li><li>Die Steuer auf tierische Lebensmittel wie Milch, Eier und Fleisch soll von 7% auf 19% erhöht werden.</li></ul></b>",
+                                    "startWithNewLine": true,
+                                    "visibleIf": "{condition} = increase"
+                                },
+                                {
+                                    "type": "html",
+                                    "name": "policy-decrease",
+                                    "html": "<b>Die Steueränderung sieht folgendes vor:<ul><li>Die Steuer auf pflanzliche Lebensmittel wie Obst, Gemüse, Hülsenfrüchte und Nüsse soll von 7% auf 0% gesenkt werden.</li><li>Die Steuer auf tierische Lebensmittel wie Milch, Eier und Fleisch soll bei 7% bleiben.</li></ul></b>",
+                                    "startWithNewLine": true,
+                                    "visibleIf": "{condition} = 'decrease'"
+                                },
+                                {
+                                    "type": "html",
+                                    "name": "policy-combo",
+                                    "html": "<b>Die Steueränderung sieht folgendes vor:<ul><li>Die Steuer auf pflanzliche Lebensmittel wie Obst, Gemüse, Hülsenfrüchte und Nüsse soll von 7% auf 0% gesenkt werden.</li><li>Die Steuer auf tierische Lebensmittel wie Milch, Eier und Fleisch soll von 7% auf 19% erhöht werden.</li></ul></b>",
+                                    "startWithNewLine": true,
+                                    "visibleIf": "{condition} = 'combo'"
+                                },
+                                {
+
+                                    "type": "panel",
+                                    "title": "**Wie sehr stimmen Sie folgenden Aussagen zu?**",
+
+                                    "elements": [
+                                        {
+                                            "type": "rating",
+                                            "name": "agreement_1",
+                                            "title": "**Ich befürworte die Steueränderung.**",
+                                            "minRateDescription": "stimme überhaupt nicht zu",
+                                            "maxRateDescription": "stimme voll und ganz zu",
+                                            "rateMin": 1,
+                                            "rateMax": 7,
+                                            "isRequired": true
+                                        },
+                                        {
+                                            "type": "rating",
+                                            "name": "pbconsumption_1",
+                                            "title": "**Wenn die Steueränderung umgesetzt würde, dann würde ich mehr Obst, Gemüse, Hülsenfrüchte und Nüsse essen.**",
+                                            "minRateDescription": "stimme überhaupt nicht zu",
+                                            "maxRateDescription": "stimme voll und ganz zu",
+                                            "rateMin": 1,
+                                            "rateMax": 7,
+                                            "isRequired": true
+                                        },
+                                        {
+                                            "type": "rating",
+                                            "name": "apconsumption_1",
+                                            "title": "**Wenn die Steueränderung umgesetzt würde, dann würde ich weniger Fleisch und Wurst, Fisch, Milchprodukte und Eier essen.**",
+                                            "minRateDescription": "stimme überhaupt nicht zu",
+                                            "maxRateDescription": "stimme voll und ganz zu",
+                                            "rateMin": 1,
+                                            "rateMax": 7,
+                                            "isRequired": true
+                                        }
+                                    ]
+
+
+                                }
+                            ]
+                        },
+                        {
+                            name: "guess",
+                            elements: [
+                                {
+                                    "type": "html",
+                                    "name": "receipt-esrtimate-intro",
+                                    "html": "<b>Sie haben uns vor einigen Wochen im Rahmen einer anderen Umfrage das Bild eines Kassenzettels geschickt. Hier haben wir diesen Einkauf noch einmal zusammengefasst:</b><br><pre id='receipt' style='font-family: monospace; white-space: pre; background:#f8f8f8; padding:1em; border-radius:6px;''>" + formattedreceipt + "</pre>",
+                                    "startWithNewLine": false
+                                },
+                                {
+                                    "name": "receipt-estimate",
+                                    "type": "text",
+                                    "title": "**Bitte schätzen Sie nun ein, wie viel Ihr Einkauf kosten würde, wenn die vorgestellte Steueränderung umgesetzt wird** ("+condition_description+"):",
+                                    "description": "Geben Sie eine Summe in Euro ein. Sie können den Betrag auf Cents genau angeben.",
+                                    "inputType": "number",
+                                    "min": 0,
+                                    "max": 1000,
+                                    "isRequired": true
+                                }
+                            ]
+                        },
+                        {
+                            name: "recalculation",
+                            elements: [
+                                 {
+                                    "type": "html",
+                                    "name": "receipt-recalculation-intro",
+                                    "html": "<p>Sie haben geschätzt, dass Ihr Einkauf durch die Steueränderung <b>{receipt-estimate} Euro</b> kosten würde. Tatsächlich würde der Einkauf durch die Steueränderung <b>" + newtotal.toFixed(2) + " Euro</b> kosten.</p><p>Im Folgenden sehen, sie sich die Steuerveränderung auf einzelne Lebensmittel auswirkt. Preise sind <span style='color:red; font-weight:bold;'>rot</span>, wenn sie sich durch die Steueränderung erhöhen und <span style='color:green; font-weight:bold;'>grün</span>, wenn sie sich verringern.</p>",
+                                    "startWithNewLine": false
+                                },
+                                {
+                                    "type": "html",
+                                    "name": "receipt-recalculation",
+                                    "html": "<pre id='receipt' style='font-family: monospace; white-space: pre; background:#f8f8f8; padding:1em; border-radius:6px;''>" + recalculatedreceipt + "</pre>",
+                                    "startWithNewLine": true
+                                },
+                                {
+
+                                    "type": "panel",
+                                    "title": "Nun möchten wir Sie noch einmal nach Ihrer Meinung zur Steueränderung ("+condition_description+") befragen. **Wie sehr stimmen Sie der folgenden Aussage zu?**",
+
+                                    "elements": [
+                                        {
+                                            "type": "rating",
+                                            "name": "agreement_2",
+                                            "title": "**Ich befürworte die Steueränderung.**",
+                                            "minRateDescription": "stimme überhaupt nicht zu",
+                                            "maxRateDescription": "stimme voll und ganz zu",
+                                            "rateMin": 1,
+                                            "rateMax": 7,
+                                            "isRequired": true
+                                        }
+                                    ]
+
+
+                                }
+                            ]
+                        },
+                        {
+                            name: "strike",
+                            elements: [
+                                 {
+                                    "type": "html",
+                                    "name": "receipt-strike-intro",
+                                    "html": "<p>Bitte stellen Sie sich vor, die Steueränderung wurde umgesetzt. Würden Sie Ihren Einkauf in diesem Fall noch einmal genauso durchführen oder einige Produkte streichen?</p><p><b>Bitte klicken Sie auf die Produkte, die sie nicht noch einmal einkaufen würden wenn der neue Preis gelten würde.</b></p>",
+                                    "startWithNewLine": false
+                                },
+                                {
+                                    "type": "html",
+                                    "name": "receipt-strike",
+                                    "html": "<pre id='receipt' style='font-family: monospace; white-space: pre; background:#f8f8f8; padding:1em; border-radius:6px;''>" + recalculatedreceipt + "</pre>",
+                                    "startWithNewLine": true
+                                }
+                            ]
+                        }]
+                };
+
+                const survey = new Survey.Model(surveyJson);
+
+                survey.setValue("condition", condition);
+
+
+
+
+                const converter = markdownit({
+                    html: true // Support HTML tags in the source (unsafe, see documentation)
+                });
+                survey.onTextMarkdown.add((_, options) => {
+                    // Convert Markdown to HTML
+                    let str = converter.renderInline(options.text);
+                    // ...
+                    // Sanitize the HTML markup using a third-party library here
+                    // ...
+                    // Set HTML markup to render
+                    options.html = str;
+                });
+
+                survey.onValidateQuestion.add(function (sender, options) {
+                    if (options.name === "consent" && options.value === false) {
+                        options.error = "Eine Teilnahme an der Umfrage erfordert Ihre Einwilligung.";
+                    }
+
+                    if (options.name === "receipt-estimate") {
+                        const val = options.value;
+
+                        // Allow empty if not required
+                        if (!val) return;
+
+                        // Price format: integer or decimal with up to 2 digits after the dot
+                        const isValidPrice = /^[0-9]+(\.[0-9]{1,2})?$/.test(val);
+
+                        if (!isValidPrice) {
+                            options.error = "Bitte geben Sie eine geschätzte Summe ein.";
+                        }
+                    }
+                   
+                });
+
+                survey.onAfterRenderQuestion.add(function (survey, options) {
+                    if (options.question.name === "receipt-strike") {
+                        const items = options.htmlElement.querySelectorAll("product");
+                        
+
+                        items.forEach((item) => {
+                        item.style.cursor = "pointer";
+                        item.addEventListener("click", function () {
+                            item.classList.toggle("striked");
+                            if (item.classList.contains("striked")) {
+                            item.style.textDecoration = "3px red line-through";
+                            } else {
+                            item.style.textDecoration = "none";
+                            }
+
+                            // Collect striked items and store in survey data
+                            const selected = Array.from(items)
+                            .filter((product) => product.classList.contains("striked"))
+                            .map((product) => ({ 
+                                no : product.getAttribute("no"),
+                                name : product.getAttribute("name")
+
+                            }));
+
+                            survey.setValue("strikedProducts", selected);
+                        });
+                        });
+                    }
+                    });
+
+
+                survey.applyTheme(SurveyTheme.Default);
+                survey.onComplete.add((sender, options) => {
+                    console.log(JSON.stringify(sender.data, null, 3));
+                });
+                survey.render(document.getElementById("surveyContainer"));
+            } catch (e) {
+                document.body.innerHTML = `<h3>❌ ${e.message}</h3>`;
+            }
+        }
+
+        initSurvey();
+
+
+
+
+    </script>
+</body>
+
+</html>
