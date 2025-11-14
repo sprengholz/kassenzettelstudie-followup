@@ -23,7 +23,7 @@
 
     <script>
 
-        
+
 
         // Helper: get a query parameter from URL
         function getParam(name) {
@@ -40,7 +40,7 @@
             return Papa.parse(text, { header: true }).data;
         }
 
-        
+
         var condition;
         var total = 0;
         var newtotal = 0;
@@ -57,13 +57,13 @@
 
             var total = 0;
 
-            for (item of items){
-                lines.push(item.name.substring(0,34).padEnd(width_name) + (item.price.toFixed(2)+"").padStart(width_price));
+            for (item of items) {
+                lines.push(item.name.substring(0, 34).padEnd(width_name) + (item.price.toFixed(2) + "").padStart(width_price));
                 total = total + item.price;
             }
 
             lines.push("-".repeat(width_name + width_price));
-            lines.push("<b>"+"Summe".padEnd(width_name) + total.toFixed(2).padStart(width_price)+"</b>")
+            lines.push("<b>" + "Summe".padEnd(width_name) + total.toFixed(2).padStart(width_price) + "</b>")
 
             return lines.join("\n");
         }
@@ -81,7 +81,7 @@
 
 
             let counter = 0;
-            for (item of items){
+            for (item of items) {
 
                 counter++;
 
@@ -92,12 +92,12 @@
                     color = "green";
                 }
 
-                lines.push(`<product no="${counter}" name="${item.name}">` + item.name.substring(0,34).padEnd(width_name) + (item.price.toFixed(2)+"").padStart(width_price) + `<span style='color:${color}; font-family: monospace; white-space: pre;'>` + (item.newprice.toFixed(2)+"").padStart(width_newprice) + "</span></product>");
+                lines.push(`<product no="${counter}" name="${item.name}">` + item.name.substring(0, 34).padEnd(width_name) + (item.price.toFixed(2) + "").padStart(width_price) + `<span style='color:${color}; font-family: monospace; white-space: pre; text-decoration-thickness: 3px;'>` + (item.newprice.toFixed(2) + "").padStart(width_newprice) + "</span></product>");
                 total = total + item.price;
                 newtotal = total + item.newprice;
             }
 
-            newtotal = Math.round(newtotal*100)/100; 
+            newtotal = Math.round(newtotal * 100) / 100;
 
             let color = "black";
             if (newtotal > total) {
@@ -107,7 +107,7 @@
             }
 
             lines.push("-".repeat(width_name + width_price + width_newprice));
-            lines.push("<b>"+"Summe".padEnd(width_name) + total.toFixed(2).padStart(width_price) + `<span style='color:${color}; font-family: monospace; white-space: pre; font-weight: bold;'>` + newtotal.toFixed(2).padStart(width_newprice)+"</span></b>")
+            lines.push("<b>" + "Summe".padEnd(width_name) + total.toFixed(2).padStart(width_price) + `<span style='color:${color}; font-family: monospace; white-space: pre; font-weight: bold;'>` + newtotal.toFixed(2).padStart(width_newprice) + "</span></b>")
 
             return lines.join("\n");
         }
@@ -123,7 +123,7 @@
 
             try {
 
-                 // randomly assign to one of two conditions and store in survey
+                // randomly assign to one of two conditions and store in survey
                 var condition = Math.random();
                 var condition_description = "";
                 if (condition <= 0.3333) {
@@ -145,19 +145,19 @@
                     const amount = parseInt(p.AMOUNT);
                     const singleprice = parseFloat(p.PRICE.replace(',', '.'));
                     const price = amount * singleprice;
-                    const tax = parseFloat(p.TAX)/100;
+                    const tax = parseFloat(p.TAX) / 100;
                     const category = p.CATEGORY;
                     var newprice;
 
                     if ((condition == "increase" || condition == "combo") && category == "MD") {
-                        newprice = (price/(1+tax))*1.19;
+                        newprice = (price / (1 + tax)) * 1.19;
                     } else if ((condition == "decrease" || condition == "combo") && category == "FV") {
-                        newprice = (price/(1+tax));
+                        newprice = (price / (1 + tax));
                     } else {
                         newprice = price;
                     }
-                    newprice = Math.round(newprice*100)/100; // cut new prices to two decimals
-            
+                    newprice = Math.round(newprice * 100) / 100; // cut new prices to two decimals
+
                     return {
                         name: name,
                         amount: amount,
@@ -281,7 +281,7 @@
                                 {
                                     "name": "receipt-estimate",
                                     "type": "text",
-                                    "title": "**Bitte schätzen Sie nun ein, wie viel Ihr Einkauf kosten würde, wenn die vorgestellte Steueränderung umgesetzt wird** ("+condition_description+"):",
+                                    "title": "**Bitte schätzen Sie nun ein, wie viel Ihr Einkauf kosten würde, wenn die vorgestellte Steueränderung umgesetzt wird** (" + condition_description + "):",
                                     "description": "Geben Sie eine Summe in Euro ein. Sie können den Betrag auf Cents genau angeben.",
                                     "inputType": "number",
                                     "min": 0,
@@ -293,7 +293,7 @@
                         {
                             name: "recalculation",
                             elements: [
-                                 {
+                                {
                                     "type": "html",
                                     "name": "receipt-recalculation-intro",
                                     "html": "<p>Sie haben geschätzt, dass Ihr Einkauf durch die Steueränderung <b>{receipt-estimate} Euro</b> kosten würde. Tatsächlich würde der Einkauf durch die Steueränderung <b>" + newtotal.toFixed(2) + " Euro</b> kosten.</p><p>Im Folgenden sehen, sie sich die Steuerveränderung auf einzelne Lebensmittel auswirkt. Preise sind <span style='color:red; font-weight:bold;'>rot</span>, wenn sie sich durch die Steueränderung erhöhen und <span style='color:green; font-weight:bold;'>grün</span>, wenn sie sich verringern.</p>",
@@ -308,7 +308,7 @@
                                 {
 
                                     "type": "panel",
-                                    "title": "Nun möchten wir Sie noch einmal nach Ihrer Meinung zur Steueränderung ("+condition_description+") befragen. **Wie sehr stimmen Sie der folgenden Aussage zu?**",
+                                    "title": "Nun möchten wir Sie noch einmal nach Ihrer Meinung zur Steueränderung (" + condition_description + ") befragen. **Wie sehr stimmen Sie der folgenden Aussage zu?**",
 
                                     "elements": [
                                         {
@@ -330,7 +330,7 @@
                         {
                             name: "strike",
                             elements: [
-                                 {
+                                {
                                     "type": "html",
                                     "name": "receipt-strike-intro",
                                     "html": "<p>Bitte stellen Sie sich vor, die Steueränderung wurde umgesetzt. Würden Sie Ihren Einkauf in diesem Fall noch einmal genauso durchführen oder einige Produkte streichen?</p><p><b>Bitte klicken Sie auf die Produkte, die sie nicht noch einmal einkaufen würden wenn der neue Preis gelten würde.</b></p>",
@@ -384,38 +384,40 @@
                             options.error = "Bitte geben Sie eine geschätzte Summe ein.";
                         }
                     }
-                   
+
                 });
 
                 survey.onAfterRenderQuestion.add(function (survey, options) {
                     if (options.question.name === "receipt-strike") {
                         const items = options.htmlElement.querySelectorAll("product");
-                        
+
 
                         items.forEach((item) => {
-                        item.style.cursor = "pointer";
-                        item.addEventListener("click", function () {
-                            item.classList.toggle("striked");
-                            if (item.classList.contains("striked")) {
-                            item.style.textDecoration = "3px red line-through";
-                            } else {
-                            item.style.textDecoration = "none";
-                            }
+                            item.style.cursor = "pointer";
+                            item.addEventListener("click", function () {
+                                item.classList.toggle("striked");
+                                if (item.classList.contains("striked")) {
+                                    item.style.textDecorationLine = "line-through";
+                                    item.style.textDecorationColor = "red";
+                                    item.style.textDecorationThickness = "3px";
+                                } else {
+                                    item.style.textDecoration = "none";
+                                }
 
-                            // Collect striked items and store in survey data
-                            const selected = Array.from(items)
-                            .filter((product) => product.classList.contains("striked"))
-                            .map((product) => ({ 
-                                no : product.getAttribute("no"),
-                                name : product.getAttribute("name")
+                                // Collect striked items and store in survey data
+                                const selected = Array.from(items)
+                                    .filter((product) => product.classList.contains("striked"))
+                                    .map((product) => ({
+                                        no: product.getAttribute("no"),
+                                        name: product.getAttribute("name")
 
-                            }));
+                                    }));
 
-                            survey.setValue("strikedProducts", selected);
-                        });
+                                survey.setValue("strikedProducts", selected);
+                            });
                         });
                     }
-                    });
+                });
 
 
                 survey.applyTheme(SurveyTheme.Default);
