@@ -3,3 +3,7 @@
 .sd-title.sd-element__title {
     font-weight: normal;
 }
+
+pre {
+    font-size: 14px;
+}

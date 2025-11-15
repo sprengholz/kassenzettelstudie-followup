@@ -47,7 +47,7 @@
 
         function generateFormattedReceipt(items) {
 
-            width_name = 32;
+            width_name = 26;
             width_price = 8;
 
             lines = [
@@ -58,7 +58,7 @@
             var total = 0;
 
             for (item of items) {
-                lines.push(item.name.substring(0, 34).padEnd(width_name) + (item.price.toFixed(2) + "").padStart(width_price));
+                lines.push(item.name.substring(0, width_name).padEnd(width_name) + (item.price.toFixed(2) + "").padStart(width_price));
                 total = total + item.price;
             }
 
@@ -70,12 +70,12 @@
 
         function generateRecalculatedReceipt(items) {
 
-            width_name = 32;
+            width_name = 26;
             width_price = 8;
-            width_newprice = 14
+            width_newprice = 8
 
             lines = [
-                "Produkt".padEnd(width_name) + "Preis".padStart(width_price) + "Neuer Preis".padStart(width_newprice),
+                "Produkt".padEnd(width_name) + "Preis".padStart(width_price) + "Neu".padStart(width_newprice),
                 "-".repeat(width_name + width_price + width_newprice)
             ]
 
@@ -92,7 +92,7 @@
                     color = "green";
                 }
 
-                lines.push(`<product no="${counter}" name="${item.name}">` + item.name.substring(0, 34).padEnd(width_name) + (item.price.toFixed(2) + "").padStart(width_price) + `<span style='color:${color}; font-family: monospace; white-space: pre; text-decoration-thickness: 3px;'>` + (item.newprice.toFixed(2) + "").padStart(width_newprice) + "</span></product>");
+                lines.push(`<product no="${counter}" name="${item.name}"><span style="font-family: monospace; font-size: 14px;">` + item.name.substring(0, width_name).padEnd(width_name) + (item.price.toFixed(2) + "").padStart(width_price) + `</span><span style='color:${color}; font-family: monospace; font-size: 14px; white-space: pre; text-decoration-thickness: 3px;'>` + (item.newprice.toFixed(2) + "").padStart(width_newprice) + "</span></product>");
                 total = total + item.price;
                 newtotal = total + item.newprice;
             }
@@ -107,7 +107,7 @@
             }
 
             lines.push("-".repeat(width_name + width_price + width_newprice));
-            lines.push("<b>" + "Summe".padEnd(width_name) + total.toFixed(2).padStart(width_price) + `<span style='color:${color}; font-family: monospace; white-space: pre; font-weight: bold;'>` + newtotal.toFixed(2).padStart(width_newprice) + "</span></b>")
+            lines.push("<span style = 'font-family: monospace; font-size: 14px; font-weight: bold;'>" + "Summe".padEnd(width_name) + total.toFixed(2).padStart(width_price) + `</span><span style='color:${color}; font-family: monospace; font-size: 14px; font-weight: bold; white-space: pre; font-weight: bold;'>` + newtotal.toFixed(2).padStart(width_newprice) + "</span></b>")
 
             return lines.join("\n");
         }
@@ -202,8 +202,20 @@
                             elements: [
                                 {
                                     "type": "html",
+                                    "name": "policy-ratingintro",
+                                    "html": "<b>Bitte stellen Sie sich folgendes vor:</b>",
+                                    "startWithNewLine": true
+                                },
+                                  {
+
+                                    "type": "panel",
+    
+
+                                    "elements": [
+                                        {
+                                    "type": "html",
                                     "name": "policy-intro",
-                                    "html": "<p>Bitte stellen Sie sich folgendes vor:</p><p><b>Die Bundesregierung diskutiert darüber, die Steuersätze für Nahrungsmittel zu ändern.</b></p><p>Momentan werden pflanzenbasierten Lebensmittel wie Obst, Gemüse, Hülsenfrüchte und Nüsse aber auch tierische Lebensmittel wie Milch, Eier und Fleisch mit einem verminderten Mehrwertsteuersatz von 7% besteuert anstatt mit dem regulären Mehrwertsteuersatz von 19%.</p>",
+                                    "html": "<p><b>Die Bundesregierung diskutiert darüber, die Steuersätze für Nahrungsmittel zu ändern.</b></p><p>Momentan werden pflanzenbasierten Lebensmittel wie Obst, Gemüse, Hülsenfrüchte und Nüsse aber auch tierische Lebensmittel wie Milch, Eier und Fleisch mit einem verminderten Mehrwertsteuersatz von 7% besteuert anstatt mit dem regulären Mehrwertsteuersatz von 19%.</p>",
                                     "startWithNewLine": false
                                 },
                                 {
@@ -226,13 +238,14 @@
                                     "html": "<b>Die Steueränderung sieht folgendes vor:<ul><li>Die Steuer auf pflanzliche Lebensmittel wie Obst, Gemüse, Hülsenfrüchte und Nüsse soll von 7% auf 0% gesenkt werden.</li><li>Die Steuer auf tierische Lebensmittel wie Milch, Eier und Fleisch soll von 7% auf 19% erhöht werden.</li></ul></b>",
                                     "startWithNewLine": true,
                                     "visibleIf": "{condition} = 'combo'"
-                                },
+                                }]},
                                 {
-
-                                    "type": "panel",
-                                    "title": "**Wie sehr stimmen Sie folgenden Aussagen zu?**",
-
-                                    "elements": [
+                                    "type": "html",
+                                    "name": "policy-ratingintro",
+                                    "html": "<b><br>Wie sehr stimmen Sie folgenden Aussagen zu?</b>",
+                                    "startWithNewLine": true
+                                },
+                              
                                         {
                                             "type": "rating",
                                             "name": "agreement_1",
@@ -263,10 +276,7 @@
                                             "rateMax": 7,
                                             "isRequired": true
                                         }
-                                    ]
-
-
-                                }
+                                    
                             ]
                         },
                         {
@@ -296,7 +306,7 @@
                                 {
                                     "type": "html",
                                     "name": "receipt-recalculation-intro",
-                                    "html": "<p>Sie haben geschätzt, dass Ihr Einkauf durch die Steueränderung <b>{receipt-estimate} Euro</b> kosten würde. Tatsächlich würde der Einkauf durch die Steueränderung <b>" + newtotal.toFixed(2) + " Euro</b> kosten.</p><p>Im Folgenden sehen, sie sich die Steuerveränderung auf einzelne Lebensmittel auswirkt. Preise sind <span style='color:red; font-weight:bold;'>rot</span>, wenn sie sich durch die Steueränderung erhöhen und <span style='color:green; font-weight:bold;'>grün</span>, wenn sie sich verringern.</p>",
+                                    "html": "<p>Sie haben geschätzt, dass Ihr Einkauf durch die Steueränderung <b>{receipt-estimate} Euro</b> kosten würde. Tatsächlich würde der Einkauf durch die Steueränderung <b>" + newtotal.toFixed(2) + " Euro</b> kosten.</p><p>Im Folgenden sehen Sie in der Spalte <i>Neu</i>, wie sich die Steuerveränderung auf einzelne Lebensmittel auswirkt. Preise sind <span style='color:red; font-weight:bold;'>rot</span>, wenn sie sich durch die Steueränderung erhöhen und <span style='color:green; font-weight:bold;'>grün</span>, wenn sie sich verringern.</p>",
                                     "startWithNewLine": false
                                 },
                                 {
