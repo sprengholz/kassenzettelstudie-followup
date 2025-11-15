@@ -12,6 +12,10 @@
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/dist/markdown-it.min.js"></script>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="https://unpkg.com/survey-core@2.3.14/survey-core.min.css" />
     <link rel="stylesheet" href="./index.css" />
 </head>
@@ -87,16 +91,22 @@
 
                 counter++;
 
-                let color = "black";
+                let color = "##f8f8f8";
+                let bgcolor = "#f8f8f8";
+                let fontweight = "normal";
                 if (item.newprice > item.price) {
-                    color = "red";
+                    color = "#ED3F27";
+                    bgcolor = "#FFC4C4";
+                    fontweight = "bold";
                 } else if (item.newprice < item.price) {
-                    color = "green";
+                    color = "#3A6F43";
+                    bgcolor = "#B4DEBD";
+                    fontweight = "bold";
                 }
 
-                lines.push(`<product no="${counter}" name="${item.name}"><span style="font-family: monospace; font-size: 14px; text-decoration-thickness: 3px;">` + (item.amount+"x ").substring(0, width_amount) + item.name.substring(0, width_name).padEnd(width_name) + (item.price.toFixed(2) + "").padStart(width_price) + `</span><span style='color:${color}; font-family: monospace; font-size: 14px; white-space: pre; text-decoration-thickness: 3px;'>` + (item.newprice.toFixed(2) + "").padStart(width_newprice) + "</span></product>");
+                lines.push(`<product no="${counter}" name="${item.name}"><span style="background-color:${bgcolor}"><span style="font-family: Ubuntu Mono, monospace; font-size: 14px; text-decoration-thickness: 3px;">` + (item.amount+"x ").substring(0, width_amount) + item.name.substring(0, width_name).padEnd(width_name) + (item.price.toFixed(2) + "").padStart(width_price) + `</span><span style='color:${color}; font-family: Ubuntu Mono, monospace; font-size: 14px; white-space: pre; text-decoration-thickness: 3px; font-weight: ${fontweight}; border-radius: 3px;'>` + (item.newprice.toFixed(2) + "").padStart(width_newprice) + "</span></span></product>");
                 total = total + item.price;
-                newtotal = total + item.newprice;
+                newtotal = newtotal + item.newprice;
             }
 
             newtotal = Math.round(newtotal * 100) / 100;
@@ -109,7 +119,7 @@
             }
 
             lines.push("-".repeat(width_name + width_price + width_newprice + width_amount));
-            lines.push("<span style = 'font-family: monospace; font-size: 14px; font-weight: bold;'>" + "Summe".padEnd(width_name +width_amount) + total.toFixed(2).padStart(width_price) + `</span><span style='color:${color}; font-family: monospace; font-size: 14px; font-weight: bold; white-space: pre; font-weight: bold;'>` + newtotal.toFixed(2).padStart(width_newprice) + "</span></b>")
+            lines.push("<span style = 'font-family: Ubuntu Mono, monospace; font-size: 14px; font-weight: bold;'>" + "Summe".padEnd(width_name +width_amount) + total.toFixed(2).padStart(width_price) + `</span><span style='color:${color}; font-family: Ubuntu Mono, monospace; font-size: 14px; font-weight: bold; white-space: pre; font-weight: bold;'>` + newtotal.toFixed(2).padStart(width_newprice) + "</span></b>")
 
             return lines.join("\n");
         }
@@ -308,7 +318,7 @@
                                 {
                                     "type": "html",
                                     "name": "receipt-recalculation-intro",
-                                    "html": "<p>Sie haben geschätzt, dass Ihr Einkauf durch die Steueränderung <b>{receipt-estimate} Euro</b> kosten würde. Tatsächlich würde der Einkauf durch die Steueränderung <b>" + newtotal.toFixed(2) + " Euro</b> kosten.</p><p>Im Folgenden sehen Sie in der Spalte <i>Neu</i>, wie sich die Steuerveränderung auf einzelne Lebensmittel auswirkt. Preise sind <span style='color:red; font-weight:bold;'>rot</span>, wenn sie sich durch die Steueränderung erhöhen und <span style='color:green; font-weight:bold;'>grün</span>, wenn sie sich verringern.</p>",
+                                    "html": "<p>Sie haben geschätzt, dass Ihr Einkauf durch die Steueränderung <b>{receipt-estimate} Euro</b> kosten würde. Tatsächlich würde der Einkauf durch die Steueränderung <b>" + newtotal.toFixed(2) + " Euro</b> kosten.</p><p>Im Folgenden sehen Sie, wie sich die Steuerveränderung auf einzelne Lebensmittel auswirkt. Lebensmittel sind <span style='color:#ED3F27; font-weight:bold;'>rot</span> hervorgehoben, wenn sich ihr Preis durch die Steueränderung erhöht und <span style='color:#3A6F43; font-weight:bold;'>grün</span>, wenn er sich verringert.</p>",
                                     "startWithNewLine": false
                                 },
                                 {
@@ -345,7 +355,7 @@
                                 {
                                     "type": "html",
                                     "name": "receipt-strike-intro",
-                                    "html": "<p>Bitte stellen Sie sich vor, die Steueränderung wurde umgesetzt. Würden Sie Ihren Einkauf in diesem Fall noch einmal genauso durchführen oder einige Produkte streichen?</p><p><b>Bitte klicken Sie auf die Produkte, die sie nicht noch einmal einkaufen würden wenn der neue Preis gelten würde.</b></p>",
+                                    "html": "<p>Bitte stellen Sie sich vor, die Steueränderung wurde umgesetzt. Würden Sie Ihren Einkauf in diesem Fall noch einmal genauso durchführen oder einige Produkte streichen?</p><p><b>Bitte klicken Sie auf die Produkte, die sie nicht noch einmal einkaufen würden wenn der neue Preis gelten würde.</b></p><p>Wenn Sie nichts streichen und alles noch einmal genauso kaufen würden, klicken Sie einfach auf Weiter.</p>",
                                     "startWithNewLine": false
                                 },
                                 {
@@ -410,7 +420,7 @@
                                 item.classList.toggle("striked");
                                 if (item.classList.contains("striked")) {
                                     item.style.textDecorationLine = "line-through";
-                                    item.style.textDecorationColor = "red";
+                                    item.style.textDecorationColor = "black";
                                     item.style.textDecorationThickness = "3px";
                                 } else {
                                     item.style.textDecoration = "none";
