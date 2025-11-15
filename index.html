@@ -47,36 +47,38 @@
 
         function generateFormattedReceipt(items) {
 
-            width_name = 26;
+            width_amount = 3;
+            width_name = 24;
             width_price = 8;
 
             lines = [
-                "Produkt".padEnd(width_name) + "Preis".padStart(width_price),
-                "-".repeat(width_name + width_price)
+                "Produkt".padEnd(width_name+width_amount) + "Preis".padStart(width_price),
+                "-".repeat(width_name + width_price + width_amount)
             ]
 
             var total = 0;
 
             for (item of items) {
-                lines.push(item.name.substring(0, width_name).padEnd(width_name) + (item.price.toFixed(2) + "").padStart(width_price));
+                lines.push((item.amount+"x ").substring(0, width_amount) +  item.name.substring(0, width_name).padEnd(width_name) + (item.price.toFixed(2) + "").padStart(width_price));
                 total = total + item.price;
             }
 
-            lines.push("-".repeat(width_name + width_price));
-            lines.push("<b>" + "Summe".padEnd(width_name) + total.toFixed(2).padStart(width_price) + "</b>")
+            lines.push("-".repeat(width_name + width_price + width_amount));
+            lines.push("<b>" + "Summe".padEnd(width_name + width_amount) + total.toFixed(2).padStart(width_price) + "</b>")
 
             return lines.join("\n");
         }
 
         function generateRecalculatedReceipt(items) {
 
+            width_amount = 3;
             width_name = 26;
             width_price = 8;
             width_newprice = 8
 
             lines = [
-                "Produkt".padEnd(width_name) + "Preis".padStart(width_price) + "Neu".padStart(width_newprice),
-                "-".repeat(width_name + width_price + width_newprice)
+                "Produkt".padEnd(width_name+width_amount) + "Preis".padStart(width_price) + "Neu".padStart(width_newprice),
+                "-".repeat(width_amount + width_name + width_price + width_newprice)
             ]
 
 
@@ -92,7 +94,7 @@
                     color = "green";
                 }
 
-                lines.push(`<product no="${counter}" name="${item.name}"><span style="font-family: monospace; font-size: 14px;">` + item.name.substring(0, width_name).padEnd(width_name) + (item.price.toFixed(2) + "").padStart(width_price) + `</span><span style='color:${color}; font-family: monospace; font-size: 14px; white-space: pre; text-decoration-thickness: 3px;'>` + (item.newprice.toFixed(2) + "").padStart(width_newprice) + "</span></product>");
+                lines.push(`<product no="${counter}" name="${item.name}"><span style="font-family: monospace; font-size: 14px; text-decoration-thickness: 3px;">` + (item.amount+"x ").substring(0, width_amount) + item.name.substring(0, width_name).padEnd(width_name) + (item.price.toFixed(2) + "").padStart(width_price) + `</span><span style='color:${color}; font-family: monospace; font-size: 14px; white-space: pre; text-decoration-thickness: 3px;'>` + (item.newprice.toFixed(2) + "").padStart(width_newprice) + "</span></product>");
                 total = total + item.price;
                 newtotal = total + item.newprice;
             }
@@ -106,8 +108,8 @@
                 color = "green";
             }
 
-            lines.push("-".repeat(width_name + width_price + width_newprice));
-            lines.push("<span style = 'font-family: monospace; font-size: 14px; font-weight: bold;'>" + "Summe".padEnd(width_name) + total.toFixed(2).padStart(width_price) + `</span><span style='color:${color}; font-family: monospace; font-size: 14px; font-weight: bold; white-space: pre; font-weight: bold;'>` + newtotal.toFixed(2).padStart(width_newprice) + "</span></b>")
+            lines.push("-".repeat(width_name + width_price + width_newprice + width_amount));
+            lines.push("<span style = 'font-family: monospace; font-size: 14px; font-weight: bold;'>" + "Summe".padEnd(width_name +width_amount) + total.toFixed(2).padStart(width_price) + `</span><span style='color:${color}; font-family: monospace; font-size: 14px; font-weight: bold; white-space: pre; font-weight: bold;'>` + newtotal.toFixed(2).padStart(width_newprice) + "</span></b>")
 
             return lines.join("\n");
         }
