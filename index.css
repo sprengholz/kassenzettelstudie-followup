@@ -22,5 +22,5 @@
 .receiptcontainer {
     display: flex;
     justify-content: center;
-    background-color: yellow;
+    background-color: transparent;
 }
