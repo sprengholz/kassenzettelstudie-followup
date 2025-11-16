@@ -92,7 +92,7 @@
                 counter++;
 
                 let color = "##f8f8f8";
-                let bgcolor = "#f8f8f8";
+                let bgcolor = "#white";
                 let fontweight = "normal";
                 if (item.newprice > item.price) {
                     color = "#ED3F27";
@@ -104,7 +104,7 @@
                     fontweight = "bold";
                 }
 
-                lines.push(`<product no="${counter}" name="${item.name}"><span style="background-color:${bgcolor}"><span style="font-family: Ubuntu Mono, monospace; font-size: 14px; text-decoration-thickness: 3px;">` + (item.amount+"x ").substring(0, width_amount) + item.name.substring(0, width_name).padEnd(width_name) + (item.price.toFixed(2) + "").padStart(width_price) + `</span><span style='color:${color}; font-family: Ubuntu Mono, monospace; font-size: 14px; white-space: pre; text-decoration-thickness: 3px; font-weight: ${fontweight}; border-radius: 3px;'>` + (item.newprice.toFixed(2) + "").padStart(width_newprice) + "</span></span></product>");
+                lines.push(`<product no="${counter}" name="${item.name}"><span style="background-color:${bgcolor}; border-radius: 3px;"><span style="font-family: Ubuntu Mono, monospace; font-size: 14px; text-decoration-thickness: 3px;">` + (item.amount+"x ").substring(0, width_amount) + item.name.substring(0, width_name).padEnd(width_name) + (item.price.toFixed(2) + "").padStart(width_price) + `</span><span style='color:${color}; font-family: Ubuntu Mono, monospace; font-size: 14px; white-space: pre; text-decoration-thickness: 3px; font-weight: ${fontweight}; border-radius: 3px;'>` + (item.newprice.toFixed(2) + "").padStart(width_newprice) + "</span></span></product>");
                 total = total + item.price;
                 newtotal = newtotal + item.newprice;
             }
@@ -297,7 +297,7 @@
                                 {
                                     "type": "html",
                                     "name": "receipt-esrtimate-intro",
-                                    "html": "<b>Sie haben uns vor einigen Wochen im Rahmen einer anderen Umfrage das Bild eines Kassenzettels geschickt. Hier haben wir diesen Einkauf noch einmal zusammengefasst:</b><br><pre id='receipt' style='font-family: monospace; white-space: pre; background:#f8f8f8; padding:1em; border-radius:6px;''>" + formattedreceipt + "</pre>",
+                                    "html": "<b>Sie haben uns vor einigen Wochen im Rahmen einer anderen Umfrage das Bild eines Kassenzettels geschickt. Hier haben wir diesen Einkauf noch einmal zusammengefasst:</b><br><div class='receiptcontainer'><div class='receipt' id='receipt''>" + formattedreceipt + "</div></div>",
                                     "startWithNewLine": false
                                 },
                                 {
@@ -324,7 +324,7 @@
                                 {
                                     "type": "html",
                                     "name": "receipt-recalculation",
-                                    "html": "<pre id='receipt' style='font-family: monospace; white-space: pre; background:#f8f8f8; padding:1em; border-radius:6px;''>" + recalculatedreceipt + "</pre>",
+                                    "html": "<div class='receiptcontainer'><div class='receipt'>" + recalculatedreceipt + "</div></div>",
                                     "startWithNewLine": true
                                 },
                                 {
@@ -361,7 +361,7 @@
                                 {
                                     "type": "html",
                                     "name": "receipt-strike",
-                                    "html": "<pre id='receipt' style='font-family: monospace; white-space: pre; background:#f8f8f8; padding:1em; border-radius:6px;''>" + recalculatedreceipt + "</pre>",
+                                    "html": "<div class='receiptcontainer' id ='receipt'><div class='receipt'>" + recalculatedreceipt + "</div></div",
                                     "startWithNewLine": true
                                 }
                             ]

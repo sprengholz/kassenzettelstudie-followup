@@ -4,7 +4,21 @@
     font-weight: normal;
 }
 
-pre {
-    font-family: "Ubuntu Mono" !important;
-    font-size: 14px;
+.receipt {
+    font-family: Ubuntu Mono !important;
+    font-size: 14px !important;
+    padding: 0px !important;
+    background-color: white !important;
+    white-space: pre;
+    width: auto;
+    display: inline-block;
+    padding: 10px 3px 10px 3px !important;
+    border-radius: 5px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.receiptcontainer {
+    display: flex;
+    justify-content: center;
 }
