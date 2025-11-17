@@ -15,7 +15,8 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet">
 
     <link rel="stylesheet" href="https://unpkg.com/survey-core@2.3.14/survey-core.min.css" />
     <link rel="stylesheet" href="./index.css" />
@@ -57,14 +58,14 @@
             width_price = 8;
 
             lines = [
-                "Produkt".padEnd(width_name+width_amount) + "Preis".padStart(width_price),
+                "Produkt".padEnd(width_name + width_amount) + "Preis".padStart(width_price),
                 "-".repeat(width_name + width_price + width_amount)
             ]
 
             var total = 0;
 
             for (item of items) {
-                lines.push((item.amount+"x ").substring(0, width_amount) +  item.name.substring(0, width_name).padEnd(width_name) + (item.price.toFixed(2) + "").padStart(width_price));
+                lines.push((item.amount + "x ").substring(0, width_amount) + item.name.substring(0, width_name).padEnd(width_name) + (item.price.toFixed(2) + "").padStart(width_price));
                 total = total + item.price;
             }
 
@@ -82,7 +83,7 @@
             width_newprice = 8
 
             lines = [
-                "Produkt".padEnd(width_name+width_amount) + "Preis".padStart(width_price) + "Neu".padStart(width_newprice),
+                "Produkt".padEnd(width_name + width_amount) + "Preis".padStart(width_price) + "Neu".padStart(width_newprice),
                 "-".repeat(width_amount + width_name + width_price + width_newprice)
             ]
 
@@ -105,7 +106,7 @@
                     fontweight = "bold";
                 }
 
-                lines.push(`<product no="${counter}" name="${item.name}"><span style="background-color:${bgcolor}; border-radius: 3px;"><span style="font-family: Ubuntu Mono, monospace; font-size: 14px; text-decoration-thickness: 3px;">` + (item.amount+"x ").substring(0, width_amount) + item.name.substring(0, width_name).padEnd(width_name) + (item.price.toFixed(2) + "").padStart(width_price) + `</span><span style='color:${color}; font-family: Ubuntu Mono, monospace; font-size: 14px; white-space: pre; text-decoration-thickness: 3px; font-weight: ${fontweight}; border-radius: 3px;'>` + (item.newprice.toFixed(2) + "").padStart(width_newprice) + "</span></span></product>");
+                lines.push(`<product no="${counter}" name="${item.name}"><span style="background-color:${bgcolor}; border-radius: 3px;"><span style="font-family: Ubuntu Mono, monospace; font-size: 14px; text-decoration-thickness: 3px;">` + (item.amount + "x ").substring(0, width_amount) + item.name.substring(0, width_name).padEnd(width_name) + (item.price.toFixed(2) + "").padStart(width_price) + `</span><span style='color:${color}; font-family: Ubuntu Mono, monospace; font-size: 14px; white-space: pre; text-decoration-thickness: 3px; font-weight: ${fontweight}; border-radius: 3px;'>` + (item.newprice.toFixed(2) + "").padStart(width_newprice) + "</span></span></product>");
                 total = total + item.price;
                 newtotal = newtotal + item.newprice;
             }
@@ -120,7 +121,7 @@
             }
 
             lines.push("-".repeat(width_name + width_price + width_newprice + width_amount));
-            lines.push("<span style = 'font-family: Ubuntu Mono, monospace; font-size: 14px; font-weight: bold;'>" + "Summe".padEnd(width_name +width_amount) + total.toFixed(2).padStart(width_price) + `</span><span style='color:${color}; font-family: Ubuntu Mono, monospace; font-size: 14px; font-weight: bold; white-space: pre; font-weight: bold;'>` + newtotal.toFixed(2).padStart(width_newprice) + "</span></b>")
+            lines.push("<span style = 'font-family: Ubuntu Mono, monospace; font-size: 14px; font-weight: bold;'>" + "Summe".padEnd(width_name + width_amount) + total.toFixed(2).padStart(width_price) + `</span><span style='color:${color}; font-family: Ubuntu Mono, monospace; font-size: 14px; font-weight: bold; white-space: pre; font-weight: bold;'>` + newtotal.toFixed(2).padStart(width_newprice) + "</span></b>")
 
             return lines.join("\n");
         }
@@ -187,9 +188,12 @@
 
                 // define SurveyJS model
                 const surveyJson = {
+                    showPrevButton: false,
+                    locale: "de",
                     pages: [
                         {
                             name: "consent",
+
                             elements: [
                                 {
                                     "type": "html",
@@ -219,77 +223,78 @@
                                     "html": "<b>Bitte stellen Sie sich folgendes vor:</b>",
                                     "startWithNewLine": true
                                 },
-                                  {
+                                {
 
                                     "type": "panel",
-    
+
 
                                     "elements": [
                                         {
-                                    "type": "html",
-                                    "name": "policy-intro",
-                                    "html": "<p><b>Die Bundesregierung diskutiert darüber, die Steuersätze für Nahrungsmittel zu ändern.</b></p><p>Momentan werden pflanzenbasierten Lebensmittel wie Obst, Gemüse, Hülsenfrüchte und Nüsse aber auch tierische Lebensmittel wie Milch, Eier und Fleisch mit einem verminderten Mehrwertsteuersatz von 7% besteuert anstatt mit dem regulären Mehrwertsteuersatz von 19%.</p>",
-                                    "startWithNewLine": false
+                                            "type": "html",
+                                            "name": "policy-intro",
+                                            "html": "<p><b>Die Bundesregierung diskutiert darüber, die Steuersätze für Nahrungsmittel zu ändern.</b></p><p>Momentan werden viele pflanzenbasierten Lebensmittel wie Obst, Gemüse, Hülsenfrüchte und Nüsse aber auch tierische Lebensmittel wie Fleisch und Wurst, Fisch, Milchprodukte und Eier mit einem verminderten Mehrwertsteuersatz von 7% besteuert anstatt mit dem regulären Mehrwertsteuersatz von 19%.</p>",
+                                            "startWithNewLine": false
+                                        },
+                                        {
+                                            "type": "html",
+                                            "name": "policy-increase",
+                                            "html": "<b>Die Steueränderung sieht folgendes vor:<ul><li>Die Steuer Obst, Gemüse, Hülsenfrüchte und Nüsse soll bei 7% bleiben.</li><li>Die Steuer auf Fleisch und Wurst, Fisch, Milchprodukte und Eier soll von 7% auf 19% erhöht werden.</li></ul></b>",
+                                            "startWithNewLine": true,
+                                            "visibleIf": "{condition} = increase"
+                                        },
+                                        {
+                                            "type": "html",
+                                            "name": "policy-decrease",
+                                            "html": "<b>Die Steueränderung sieht folgendes vor:<ul><li>Die Steuer auf Obst, Gemüse, Hülsenfrüchte und Nüsse soll von 7% auf 0% gesenkt werden.</li><li>Die Steuer auf Fleisch und Wurst, Fisch, Milchprodukte und Eier soll bei 7% bleiben.</li></ul></b>",
+                                            "startWithNewLine": true,
+                                            "visibleIf": "{condition} = 'decrease'"
+                                        },
+                                        {
+                                            "type": "html",
+                                            "name": "policy-combo",
+                                            "html": "<b>Die Steueränderung sieht folgendes vor:<ul><li>Die Steuer auf Obst, Gemüse, Hülsenfrüchte und Nüsse soll von 7% auf 0% gesenkt werden.</li><li>Die Steuer auf Fleisch und Wurst, Fisch, Milchprodukte und Eier soll von 7% auf 19% erhöht werden.</li></ul></b>",
+                                            "startWithNewLine": true,
+                                            "visibleIf": "{condition} = 'combo'"
+                                        }]
                                 },
-                                {
-                                    "type": "html",
-                                    "name": "policy-increase",
-                                    "html": "<b>Die Steueränderung sieht folgendes vor:<ul><li>Die Steuer auf pflanzliche Lebensmittel wie Obst, Gemüse, Hülsenfrüchte und Nüsse soll bei 7% bleiben.</li><li>Die Steuer auf tierische Lebensmittel wie Milch, Eier und Fleisch soll von 7% auf 19% erhöht werden.</li></ul></b>",
-                                    "startWithNewLine": true,
-                                    "visibleIf": "{condition} = increase"
-                                },
-                                {
-                                    "type": "html",
-                                    "name": "policy-decrease",
-                                    "html": "<b>Die Steueränderung sieht folgendes vor:<ul><li>Die Steuer auf pflanzliche Lebensmittel wie Obst, Gemüse, Hülsenfrüchte und Nüsse soll von 7% auf 0% gesenkt werden.</li><li>Die Steuer auf tierische Lebensmittel wie Milch, Eier und Fleisch soll bei 7% bleiben.</li></ul></b>",
-                                    "startWithNewLine": true,
-                                    "visibleIf": "{condition} = 'decrease'"
-                                },
-                                {
-                                    "type": "html",
-                                    "name": "policy-combo",
-                                    "html": "<b>Die Steueränderung sieht folgendes vor:<ul><li>Die Steuer auf pflanzliche Lebensmittel wie Obst, Gemüse, Hülsenfrüchte und Nüsse soll von 7% auf 0% gesenkt werden.</li><li>Die Steuer auf tierische Lebensmittel wie Milch, Eier und Fleisch soll von 7% auf 19% erhöht werden.</li></ul></b>",
-                                    "startWithNewLine": true,
-                                    "visibleIf": "{condition} = 'combo'"
-                                }]},
                                 {
                                     "type": "html",
                                     "name": "policy-ratingintro",
                                     "html": "<b><br>Wie sehr stimmen Sie folgenden Aussagen zu?</b>",
                                     "startWithNewLine": true
                                 },
-                              
-                                        {
-                                            "type": "rating",
-                                            "name": "agreement_1",
-                                            "title": "**Ich befürworte die Steueränderung.**",
-                                            "minRateDescription": "stimme überhaupt nicht zu",
-                                            "maxRateDescription": "stimme voll und ganz zu",
-                                            "rateMin": 1,
-                                            "rateMax": 7,
-                                            "isRequired": true
-                                        },
-                                        {
-                                            "type": "rating",
-                                            "name": "pbconsumption_1",
-                                            "title": "**Wenn die Steueränderung umgesetzt würde, dann würde ich mehr Obst, Gemüse, Hülsenfrüchte und Nüsse essen.**",
-                                            "minRateDescription": "stimme überhaupt nicht zu",
-                                            "maxRateDescription": "stimme voll und ganz zu",
-                                            "rateMin": 1,
-                                            "rateMax": 7,
-                                            "isRequired": true
-                                        },
-                                        {
-                                            "type": "rating",
-                                            "name": "apconsumption_1",
-                                            "title": "**Wenn die Steueränderung umgesetzt würde, dann würde ich weniger Fleisch und Wurst, Fisch, Milchprodukte und Eier essen.**",
-                                            "minRateDescription": "stimme überhaupt nicht zu",
-                                            "maxRateDescription": "stimme voll und ganz zu",
-                                            "rateMin": 1,
-                                            "rateMax": 7,
-                                            "isRequired": true
-                                        }
-                                    
+
+                                {
+                                    "type": "rating",
+                                    "name": "agreement_1",
+                                    "title": "**Ich befürworte die Steueränderung.**",
+                                    "minRateDescription": "stimme überhaupt nicht zu",
+                                    "maxRateDescription": "stimme voll und ganz zu",
+                                    "rateMin": 1,
+                                    "rateMax": 7,
+                                    "isRequired": true
+                                },
+                                {
+                                    "type": "rating",
+                                    "name": "pbconsumption_1",
+                                    "title": "**Wenn die Steueränderung umgesetzt würde, dann würde ich mehr Obst, Gemüse, Hülsenfrüchte und Nüsse essen.**",
+                                    "minRateDescription": "stimme überhaupt nicht zu",
+                                    "maxRateDescription": "stimme voll und ganz zu",
+                                    "rateMin": 1,
+                                    "rateMax": 7,
+                                    "isRequired": true
+                                },
+                                {
+                                    "type": "rating",
+                                    "name": "apconsumption_1",
+                                    "title": "**Wenn die Steueränderung umgesetzt würde, dann würde ich weniger Fleisch und Wurst, Fisch, Milchprodukte und Eier essen.**",
+                                    "minRateDescription": "stimme überhaupt nicht zu",
+                                    "maxRateDescription": "stimme voll und ganz zu",
+                                    "rateMin": 1,
+                                    "rateMax": 7,
+                                    "isRequired": true
+                                }
+
                             ]
                         },
                         {
@@ -371,10 +376,8 @@
 
                 const survey = new Survey.Model(surveyJson);
 
+                survey.setValue("userId", userId);
                 survey.setValue("condition", condition);
-
-
-
 
                 const converter = markdownit({
                     html: true // Support HTML tags in the source (unsafe, see documentation)
@@ -446,6 +449,43 @@
                 survey.applyTheme(SurveyTheme.Default);
                 survey.onComplete.add((sender, options) => {
                     console.log(JSON.stringify(sender.data, null, 3));
+
+
+                    const results = sender.data;
+
+
+                    // Google Sheet
+                    fetch("https://script.google.com/macros/s/AKfycbyfqlYEw7No252VEQfEx0Za63kVrP0NWuye8FAOvtPHe_sP5LuRc0c6Rx1xP2D_R2XC/exec", {
+                        method: "POST",
+                        mode: "no-cors",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(results)
+                    });
+
+                    // JSON saver
+
+                    const surveyData = sender.data; // all question results as JSON
+
+                    fetch("https://jsonsaver.com/api/v1/jsonstore/public/kassenzettel/", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(results)
+                    })
+                        .then(response => response.json())
+                        .then(json => {
+                            console.log("Saved to jsonSaver. Response:", json);
+                            // jsonSaver returns something like { id: "some-store-id" }
+                            // You can store this ID, or show a link to the user:
+                            alert("Your data was saved. Reference ID: " + json.id);
+                        })
+                        .catch(err => {
+                            console.error("Error saving to jsonSaver:", err);
+                        });
+
                 });
                 survey.render(document.getElementById("surveyContainer"));
             } catch (e) {
