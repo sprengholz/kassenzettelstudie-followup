@@ -65,12 +65,12 @@
             var total = 0;
 
             for (item of items) {
-                lines.push((item.amount + "x ").substring(0, width_amount) + item.name.substring(0, width_name).padEnd(width_name) + (item.price.toFixed(2) + "").padStart(width_price).replace('.',','));
+                lines.push((item.amount + "x ").substring(0, width_amount) + item.name.substring(0, width_name).padEnd(width_name) + (item.price.toFixed(2) + "").padStart(width_price).replace('.', ','));
                 total = total + item.price;
             }
 
             lines.push("-".repeat(width_name + width_price + width_amount));
-            lines.push("<b>" + "Summe".padEnd(width_name + width_amount) + total.toFixed(2).padStart(width_price).replace('.',',') + "</b>")
+            lines.push("<b>" + "Summe".padEnd(width_name + width_amount) + total.toFixed(2).padStart(width_price).replace('.', ',') + "</b>")
 
             return lines.join("\n");
         }
@@ -106,7 +106,7 @@
                     fontweight = "bold";
                 }
 
-                lines.push(`<product no="${counter}" name="${item.name}"><span style="background-color:${bgcolor}; border-radius: 3px;"><span style="font-family: Ubuntu Mono, monospace; font-size: 14px; text-decoration-thickness: 3px;">` + (item.amount + "x ").substring(0, width_amount) + item.name.substring(0, width_name).padEnd(width_name) + (item.price.toFixed(2) + "").padStart(width_price).replace('.',',') + `</span><span style='color:${color}; font-family: Ubuntu Mono, monospace; font-size: 14px; white-space: pre; text-decoration-thickness: 3px; font-weight: ${fontweight}; border-radius: 3px;'>` + (item.newprice.toFixed(2) + "").padStart(width_newprice).replace('.',',') + "</span></span></product>");
+                lines.push(`<product no="${counter}" name="${item.name}"><span style="background-color:${bgcolor}; border-radius: 3px;"><span style="font-family: Ubuntu Mono, monospace; font-size: 14px; text-decoration-thickness: 3px;">` + (item.amount + "x ").substring(0, width_amount) + item.name.substring(0, width_name).padEnd(width_name) + (item.price.toFixed(2) + "").padStart(width_price).replace('.', ',') + `</span><span style='color:${color}; font-family: Ubuntu Mono, monospace; font-size: 14px; white-space: pre; text-decoration-thickness: 3px; font-weight: ${fontweight}; border-radius: 3px;'>` + (item.newprice.toFixed(2) + "").padStart(width_newprice).replace('.', ',') + "</span></span></product>");
                 total = total + item.price;
                 newtotal = newtotal + item.newprice;
             }
@@ -121,7 +121,7 @@
             }
 
             lines.push("-".repeat(width_name + width_price + width_newprice + width_amount));
-            lines.push("<span style = 'font-family: Ubuntu Mono, monospace; font-size: 14px; font-weight: bold;'>" + "Summe".padEnd(width_name + width_amount) + total.toFixed(2).padStart(width_price).replace('.',',') + `</span><span style='color:${color}; font-family: Ubuntu Mono, monospace; font-size: 14px; font-weight: bold; white-space: pre; font-weight: bold;'>` + newtotal.toFixed(2).padStart(width_newprice).replace('.',',') + "</span></b>")
+            lines.push("<span id = 'sumline' style = 'font-family: Ubuntu Mono, monospace; font-size: 14px; font-weight: bold;'>" + "Summe".padEnd(width_name + width_amount) + total.toFixed(2).padStart(width_price).replace('.', ',') + `</span><span id='sumline-extension' style='color:${color}; font-family: Ubuntu Mono, monospace; font-size: 14px; font-weight: bold; white-space: pre; font-weight: bold;'>` + newtotal.toFixed(2).padStart(width_newprice).replace('.', ',') + "</span></b>")
 
             return lines.join("\n");
         }
@@ -342,7 +342,7 @@
                                 {
 
                                     "type": "panel",
-                                    "title": "Nun möchten wir Sie noch einmal nach Ihrer Meinung zur Steueränderung (" + condition_description + ") befragen. **Wie sehr stimmen Sie der folgenden Aussage zu?**",
+                                    "title": "**Nun möchten wir Sie noch einmal nach Ihrer Meinung zur Steueränderung befragen** (" + condition_description + "). **Wie sehr stimmen Sie der folgenden Aussage zu?**",
 
                                     "elements": [
                                         {
@@ -430,8 +430,37 @@
                                         name: product.getAttribute("name")
 
                                     }));
-
                                 survey.setValue("strikedProducts", selected);
+
+                                // Update totals
+                                const remainingProductIndexes = Array.from(items)
+                                    .filter(product => !product.classList.contains("striked"))
+                                    .map(product => Number(product.getAttribute("no")) - 1);
+
+                                console.log(remainingProductIndexes);
+
+
+                                const total_unstriked = productlist.filter((_, index) => remainingProductIndexes.includes(index)).reduce((sum, item) => sum + item.price, 0);
+                                const newtotal_unstriked = productlist.filter((_, index) => remainingProductIndexes.includes(index)).reduce((sum, item) => sum + item.newprice, 0);
+
+                                let color_unstriked = "black";
+                                if (newtotal_unstriked > total_unstriked) {
+                                    color_unstriked = "red";
+                                } else if (newtotal_unstriked < total_unstriked) {
+                                    color_unstriked = "green";
+                                }
+                                
+                                sumline = document.getElementById("sumline");
+                                sumline_extension = document.getElementById("sumline-extension");
+                                sumline.innerHTML = "Summe".padEnd(26 + 3) + total_unstriked.toFixed(2).padStart(8).replace('.', ',');
+                                sumline_extension.innerHTML = newtotal_unstriked.toFixed(2).padStart(8).replace('.', ',');
+                                sumline_extension.style.color = color_unstriked;
+
+                                // Store values
+                                survey.setValue("total_originaltax_all", total);
+                                survey.setValue("total_newtax_all", newtotal);
+                                survey.setValue("total_originaltax_unstriked", total_unstriked);
+                                survey.setValue("total_newtax_unstriked", newtotal_unstriked);
                             });
                         });
                     }
@@ -466,7 +495,7 @@
                 }
 
                 async function saveResults(results) {
-                    
+
                     console.log("Started data transfer...");
 
                     // Save to Google Sheets
