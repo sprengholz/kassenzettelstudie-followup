@@ -50,6 +50,7 @@
         var condition;
         var total = 0;
         var newtotal = 0;
+        var numberOfStrikedProducts = 0;
 
         function generateFormattedReceipt(items) {
 
@@ -190,7 +191,7 @@
                 const surveyJson = {
                     showPrevButton: false,
                     locale: "de",
-                    completedHtml: "<img src='animation.gif' style='max-width: 100px;'/><p>Vielen Dank. Ihre Antworten werden übertragen, anschließend werden Sie automatisch zu Prolific zurückgeleitet. Bitte warten...</p>",
+                    completedHtml: "<img src='animation.gif' style='width: 100px;'/><p>Vielen Dank. Ihre Antworten werden übertragen, anschließend werden Sie automatisch zu Prolific zurückgeleitet. Bitte warten...</p>",
                     pages: [
                         {
                             name: "consent",
@@ -206,7 +207,7 @@
 
                                     "type": "boolean",
                                     "name": "consent",
-                                    "title": "Einwilligungserklärung",
+                                    "title": "**Einwilligungserklärung**",
                                     "labelTrue": "**Ja, ich möchte an der Umfrage teilnehmen** und willige in die Verarbeitung meiner Daten zum Zweck der wissenschaftlichen Forschung ein.",
                                     "labelFalse": "**Nein, ich möchte nicht an der Umfrage teilnehmen.**",
                                     "renderAs": "radio",
@@ -259,42 +260,54 @@
                                         }]
                                 },
                                 {
-                                    "type": "html",
-                                    "name": "policy-ratingintro",
-                                    "html": "<b><br>Wie sehr stimmen Sie folgenden Aussagen zu?</b>",
-                                    "startWithNewLine": true
-                                },
+                                    "type": "panel",
+                                    "title": "**Wie sehr stimmen Sie folgenden Aussagen zu?**",
+                                    elements: [
+                                        {
+                                            "type": "rating",
+                                            "name": "agreement_1",
+                                            "title": "**Ich befürworte die Steueränderung.**",
+                                            "minRateDescription": "stimme überhaupt nicht zu",
+                                            "maxRateDescription": "stimme voll und ganz zu",
+                                            "rateMin": 1,
+                                            "rateMax": 7,
+                                            "isRequired": true
+                                        },
+                                        {
+                                            "type": "rating",
+                                            "name": "reactance_1",
+                                            "title": "**Ich ärgere mich über die Steueränderung.**",
+                                            "minRateDescription": "stimme überhaupt nicht zu",
+                                            "maxRateDescription": "stimme voll und ganz zu",
+                                            "rateMin": 1,
+                                            "rateMax": 7,
+                                            "isRequired": true
+                                        },
+                                        {
+                                            "type": "rating",
+                                            "name": "pbconsumption_1",
+                                            "title": "**Wenn die Steueränderung umgesetzt würde, dann würde ich mehr Obst, Gemüse, Hülsenfrüchte und Nüsse essen.**",
+                                            "minRateDescription": "stimme überhaupt nicht zu",
+                                            "maxRateDescription": "stimme voll und ganz zu",
+                                            "rateMin": 1,
+                                            "rateMax": 7,
+                                            "isRequired": true
+                                        },
+                                        {
+                                            "type": "rating",
+                                            "name": "apconsumption_1",
+                                            "title": "**Wenn die Steueränderung umgesetzt würde, dann würde ich weniger Fleisch und Wurst, Fisch, Milchprodukte und Eier essen.**",
+                                            "minRateDescription": "stimme überhaupt nicht zu",
+                                            "maxRateDescription": "stimme voll und ganz zu",
+                                            "rateMin": 1,
+                                            "rateMax": 7,
+                                            "isRequired": true
+                                        }
+                                    ]
 
-                                {
-                                    "type": "rating",
-                                    "name": "agreement_1",
-                                    "title": "**Ich befürworte die Steueränderung.**",
-                                    "minRateDescription": "stimme überhaupt nicht zu",
-                                    "maxRateDescription": "stimme voll und ganz zu",
-                                    "rateMin": 1,
-                                    "rateMax": 7,
-                                    "isRequired": true
-                                },
-                                {
-                                    "type": "rating",
-                                    "name": "pbconsumption_1",
-                                    "title": "**Wenn die Steueränderung umgesetzt würde, dann würde ich mehr Obst, Gemüse, Hülsenfrüchte und Nüsse essen.**",
-                                    "minRateDescription": "stimme überhaupt nicht zu",
-                                    "maxRateDescription": "stimme voll und ganz zu",
-                                    "rateMin": 1,
-                                    "rateMax": 7,
-                                    "isRequired": true
-                                },
-                                {
-                                    "type": "rating",
-                                    "name": "apconsumption_1",
-                                    "title": "**Wenn die Steueränderung umgesetzt würde, dann würde ich weniger Fleisch und Wurst, Fisch, Milchprodukte und Eier essen.**",
-                                    "minRateDescription": "stimme überhaupt nicht zu",
-                                    "maxRateDescription": "stimme voll und ganz zu",
-                                    "rateMin": 1,
-                                    "rateMax": 7,
-                                    "isRequired": true
+
                                 }
+
 
                             ]
                         },
@@ -330,7 +343,7 @@
                                 {
                                     "type": "html",
                                     "name": "receipt-recalculation-intro",
-                                    "html": "<p>Sie haben geschätzt, dass Ihr Einkauf durch die Steueränderung <b>{receipt-estimate}</b> kosten würde. Tatsächlich würde der Einkauf durch die Steueränderung <b>" + newtotal.toFixed(2) + " €</b> kosten.</p><p>Im Folgenden sehen Sie, wie sich die Steuerveränderung auf einzelne Lebensmittel auswirkt. Lebensmittel sind <span style='color:#ED3F27; font-weight:bold;'>rot</span> hervorgehoben, wenn sich ihr Preis durch die Steueränderung erhöht und <span style='color:#3A6F43; font-weight:bold;'>grün</span>, wenn er sich verringert.</p>",
+                                    "html": "<p>Sie haben geschätzt, dass Ihr Einkauf durch die Steueränderung <b>{receipt-estimate}</b> kosten würde. Tatsächlich würde der Einkauf durch die Steueränderung <b>" + newtotal.toFixed(2).replace('.', ',') + " €</b> kosten.</p><p>Im Folgenden sehen Sie, wie sich die Steuerveränderung auf einzelne Lebensmittel auswirkt. Lebensmittel sind <span style='color:#ED3F27; font-weight:bold;'>rot</span> hervorgehoben, wenn sich ihr Preis durch die Steueränderung erhöht und <span style='color:#3A6F43; font-weight:bold;'>grün</span>, wenn er sich verringert.</p>",
                                     "startWithNewLine": false
                                 },
                                 {
@@ -342,7 +355,7 @@
                                 {
 
                                     "type": "panel",
-                                    "title": "**Nun möchten wir Sie noch einmal nach Ihrer Meinung zur Steueränderung befragen** (" + condition_description + "). **Wie sehr stimmen Sie der folgenden Aussage zu?**",
+                                    "title": "**Nun möchten wir Sie noch einmal nach Ihrer Meinung zur Steueränderung befragen** (" + condition_description + "). **Wie sehr stimmen Sie folgenden Aussage zu?**",
 
                                     "elements": [
                                         {
@@ -354,7 +367,17 @@
                                             "rateMin": 1,
                                             "rateMax": 7,
                                             "isRequired": true
-                                        }
+                                        },
+                                        {
+                                            "type": "rating",
+                                            "name": "reactance_2",
+                                            "title": "**Ich ärgere mich über die Steueränderung.**",
+                                            "minRateDescription": "stimme überhaupt nicht zu",
+                                            "maxRateDescription": "stimme voll und ganz zu",
+                                            "rateMin": 1,
+                                            "rateMax": 7,
+                                            "isRequired": true
+                                        },
                                     ]
 
 
@@ -367,7 +390,7 @@
                                 {
                                     "type": "html",
                                     "name": "receipt-strike-intro",
-                                    "html": "<p>Bitte stellen Sie sich vor, die Steueränderung wurde umgesetzt. Würden Sie Ihren Einkauf in diesem Fall noch einmal genauso durchführen oder einige Produkte streichen?</p><p><b>Bitte klicken Sie auf die Produkte, die sie nicht noch einmal einkaufen würden wenn der neue Preis gelten würde.</b></p><p>Wenn Sie nichts streichen und alles noch einmal genauso kaufen würden, klicken Sie einfach auf Weiter.</p>",
+                                    "html": "<p>Bitte stellen Sie sich vor, die Steueränderung wurde umgesetzt. Würden Sie Ihren Einkauf in diesem Fall noch einmal genauso durchführen oder einige Produkte streichen?</p><p><b>Bitte klicken Sie auf die Produkte, die sie nicht noch einmal einkaufen würden wenn der neue Preis gelten würde.</b></p><p>Wenn Sie nichts streichen und alles noch einmal genauso kaufen würden, geben Sie dies bitte unten an.</p>",
                                     "startWithNewLine": false
                                 },
                                 {
@@ -375,9 +398,71 @@
                                     "name": "receipt-strike",
                                     "html": "<div class='receiptcontainer'><div class='receipt'>" + recalculatedreceipt + "</div></div",
                                     "startWithNewLine": true
+                                },
+                                {
+                                    "type": "boolean",
+                                    "name": "nostrike",
+                                    "title": "**Ich möchte keine Produkte streichen** und würde den Einkauf noch einmal genauso durchführen.",
+                                    "useTitleAsLabel": true,
+                                    "renderAs": "checkbox"
                                 }
                             ]
-                        }]
+                        },
+                        {
+                            name: "other",
+                            elements: [
+                                {
+                                 "type": "panel",
+                                 "title": "**Abschließend geht es um die Auswirkungen der vorgestellten Steueränderung** ("+condition_description+").",
+                                    "elements" : [
+                           
+                                {
+                                            "type": "rating",
+                                            "name": "effect_environment",
+                                            "title": "**Wie stark fördert die Steueränderung Ihrer Meinung nach den Klima- und Umweltschutz?**",
+                                            "minRateDescription": "überhaupt nicht",
+                                            "maxRateDescription": "sehr",
+                                            "rateMin": 1,
+                                            "rateMax": 7,
+                                            "isRequired": true
+                                },
+                                 {
+                                            "type": "rating",
+                                            "name": "effect_health",
+                                            "title": "**Wie stark fördert die Steueränderung Ihrer Meinung nach die Gesundheit der Menschen in Deutschland?**",
+                                            "minRateDescription": "überhaupt nicht",
+                                            "maxRateDescription": "sehr",
+                                            "rateMin": 1,
+                                            "rateMax": 7,
+                                            "isRequired": true
+                                }]},
+                                  {
+                                 "type": "panel",
+                                 "title": "**Nun haben wir noch 2 Fragen zu Ihrer Person.**",
+                                    "elements" : [
+                                {
+                                    "type": "boolean",
+                                    "name": "meat",
+                                    "title": "**Essen Sie aktuell Fleisch, Wurst und/oder Fisch?**",
+                                    "valueTrue": "Ja",
+                                    "valueFalse": "Nein",
+                                    "renderAs": "radio",
+                                    "swapOrder": true,
+                                    "isRequired": true
+                                },
+                                 {
+                                    "type": "boolean",
+                                    "name": "dairyeaggs",
+                                    "title": "**Essen Sie aktuell Milchprodukte und/oder Eier?**",
+                                    "valueTrue": "Ja",
+                                    "valueFalse": "Nein",
+                                    "renderAs": "radio",
+                                    "swapOrder": true,
+                                    "isRequired": true
+                                }]}
+                            ]
+                        },
+                    ]
                 };
 
                 const survey = new Survey.Model(surveyJson);
@@ -401,6 +486,19 @@
                 survey.onValidateQuestion.add(function (sender, options) {
                     if (options.name === "consent" && options.value === false) {
                         options.error = "Eine Teilnahme an der Umfrage erfordert Ihre Einwilligung.";
+                    }
+
+                    if (options.name === "nostrike") {
+                        
+                        if (((options.value === undefined) || (options.value === false)) && (numberOfStrikedProducts == 0)){
+                            options.error = "Sie haben keine Produkte gestrichen. Wenn Sie keine Produkte streichen wollen, setzen Sie hier bitte einen Haken.";
+                        }
+
+                        if ((options.value === true) && (numberOfStrikedProducts > 0)){
+                            options.error = "Sie haben Produkte gestrichen. Bitte entfernen Sie hier den Haken.";
+                        }
+
+                        
                     }
 
                 });
@@ -431,6 +529,7 @@
 
                                     }));
                                 survey.setValue("strikedProducts", selected);
+                                numberOfStrikedProducts = selected.length;
 
                                 // Update totals
                                 const remainingProductIndexes = Array.from(items)
@@ -449,7 +548,7 @@
                                 } else if (newtotal_unstriked < total_unstriked) {
                                     color_unstriked = "green";
                                 }
-                                
+
                                 sumline = document.getElementById("sumline");
                                 sumline_extension = document.getElementById("sumline-extension");
                                 sumline.innerHTML = "Summe".padEnd(26 + 3) + total_unstriked.toFixed(2).padStart(8).replace('.', ',');
@@ -525,7 +624,7 @@
                     );
                     console.log("✔ JSONBin done");
 
-                    window.location.href = "https://google.com";
+                    window.location.href = "https://www.prolific.com/";
 
                 }
 
