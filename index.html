@@ -191,7 +191,7 @@
                 const surveyJson = {
                     showPrevButton: false,
                     locale: "de",
-                    completedHtml: "<img src='animation.gif' style='width: 100px;'/><p>Vielen Dank. Ihre Antworten werden übertragen, anschließend werden Sie automatisch zu Prolific zurückgeleitet. Bitte warten...</p>",
+                    completedHtml: "<img src='img/animation.gif' style='width: 100px;'/><p>Vielen Dank. Ihre Antworten werden übertragen, anschließend werden Sie automatisch zu Prolific zurückgeleitet. Bitte warten...</p>",
                     pages: [
                         {
                             name: "consent",
@@ -240,21 +240,21 @@
                                         {
                                             "type": "html",
                                             "name": "policy-increase",
-                                            "html": "<b>Die Steueränderung sieht folgendes vor:<ul><li>Die Steuer Obst, Gemüse, Hülsenfrüchte und Nüsse soll bei 7% bleiben.</li><li>Die Steuer auf Fleisch und Wurst, Fisch, Milchprodukte und Eier soll von 7% auf 19% erhöht werden.</li></ul></b>",
+                                            "html": "<b>Die Steueränderung sieht folgendes vor:<ul><li>Die Steuer Obst, Gemüse, Hülsenfrüchte und Nüsse soll bei 7% bleiben.</li><li>Die Steuer auf Fleisch und Wurst, Fisch, Milchprodukte und Eier soll von 7% auf 19% erhöht werden.</li></ul></b><br><div style='text-align: center;'><img src='img/increase.png'/></div>",
                                             "startWithNewLine": true,
                                             "visibleIf": "{condition} = increase"
                                         },
                                         {
                                             "type": "html",
                                             "name": "policy-decrease",
-                                            "html": "<b>Die Steueränderung sieht folgendes vor:<ul><li>Die Steuer auf Obst, Gemüse, Hülsenfrüchte und Nüsse soll von 7% auf 0% gesenkt werden.</li><li>Die Steuer auf Fleisch und Wurst, Fisch, Milchprodukte und Eier soll bei 7% bleiben.</li></ul></b>",
+                                            "html": "<b>Die Steueränderung sieht folgendes vor:<ul><li>Die Steuer auf Obst, Gemüse, Hülsenfrüchte und Nüsse soll von 7% auf 0% gesenkt werden.</li><li>Die Steuer auf Fleisch und Wurst, Fisch, Milchprodukte und Eier soll bei 7% bleiben.</li></ul></b><br><div style='text-align: center;'><img src='img/decrease.png'/></div>",
                                             "startWithNewLine": true,
                                             "visibleIf": "{condition} = 'decrease'"
                                         },
                                         {
                                             "type": "html",
                                             "name": "policy-combo",
-                                            "html": "<b>Die Steueränderung sieht folgendes vor:<ul><li>Die Steuer auf Obst, Gemüse, Hülsenfrüchte und Nüsse soll von 7% auf 0% gesenkt werden.</li><li>Die Steuer auf Fleisch und Wurst, Fisch, Milchprodukte und Eier soll von 7% auf 19% erhöht werden.</li></ul></b>",
+                                            "html": "<b>Die Steueränderung sieht folgendes vor:<ul><li>Die Steuer auf Obst, Gemüse, Hülsenfrüchte und Nüsse soll von 7% auf 0% gesenkt werden.</li><li>Die Steuer auf Fleisch und Wurst, Fisch, Milchprodukte und Eier soll von 7% auf 19% erhöht werden.</li></ul></b><br><div style='text-align: center;'><img src='img/combo.png'/></div>",
                                             "startWithNewLine": true,
                                             "visibleIf": "{condition} = 'combo'"
                                         }]
