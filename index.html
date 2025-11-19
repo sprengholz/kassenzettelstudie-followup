@@ -438,7 +438,7 @@
                                 }]},
                                   {
                                  "type": "panel",
-                                 "title": "**Nun haben wir noch 2 Fragen zu Ihrer Person.**",
+                                 "title": "**Nun haben wir noch 3 Fragen zu Ihrer Person.**",
                                     "elements" : [
                                 {
                                     "type": "boolean",
@@ -459,6 +459,15 @@
                                     "renderAs": "radio",
                                     "swapOrder": true,
                                     "isRequired": true
+                                }, {
+                                            "type": "rating",
+                                            "name": "motive_health",
+                                            "title": "**Wie sehr achten Sie auf gesunde Ernährung?**",
+                                            "minRateDescription": "überhaupt nicht",
+                                            "maxRateDescription": "sehr",
+                                            "rateMin": 1,
+                                            "rateMax": 7,
+                                            "isRequired": true
                                 }]}
                             ]
                         },
