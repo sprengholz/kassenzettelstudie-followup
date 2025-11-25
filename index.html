@@ -597,7 +597,7 @@
                 survey.setValue("total_newtax_all", newtotal);
                 survey.setValue("total_originaltax_unstriked", total); //nothing striked at the beginning of the survey
                 survey.setValue("total_newtax_unstriked", newtotal); //nothing striked at the beginning of the survey
-                survey.setValue("strikedProducts", ""); //nothing striked at the beginning of the survey
+                survey.setValue("strikedProducts", "NONE"); //nothing striked at the beginning of the survey
 
                 survey.onAfterRenderQuestion.add(function (survey, options) {
                     if (options.question.name === "receipt-strike") {
