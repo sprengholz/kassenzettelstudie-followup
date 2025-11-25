@@ -43,7 +43,7 @@
             const response = await fetch(`kassenzettel/${userId}.csv`);
             if (!response.ok) throw new Error("Nutzer " + userId + " unbekannt!");
             const text = await response.text();
-            return Papa.parse(text, { header: true }).data;
+            return Papa.parse(text, { header: true, skipEmptyLines: true }).data;
         }
 
 
@@ -158,7 +158,7 @@
 
                     const name = p.NAME;
                     const amount = parseInt(p.AMOUNT);
-                    const singleprice = parseFloat(p.PRICE.replace(',', '.'));
+                    const singleprice = parseFloat(p.PRICE);
                     const price = amount * singleprice;
                     const tax = parseFloat(p.TAX) / 100;
                     const category = p.CATEGORY;
@@ -184,6 +184,9 @@
 
                 });
 
+                console.log(receipt);
+
+
                 const formattedreceipt = generateFormattedReceipt(productlist);
                 const recalculatedreceipt = generateRecalculatedReceipt(productlist);
 
@@ -191,6 +194,7 @@
                 const surveyJson = {
                     showPrevButton: false,
                     locale: "de",
+                    questionTitlePattern: "numTitle",
                     completedHtml: "<img src='img/animation.gif' style='width: 100px;'/><p>Vielen Dank. Ihre Antworten werden übertragen, anschließend werden Sie automatisch zu Prolific zurückgeleitet. Bitte warten...</p>",
                     pages: [
                         {
@@ -240,24 +244,64 @@
                                         {
                                             "type": "html",
                                             "name": "policy-increase",
-                                            "html": "<b>Die Steueränderung sieht folgendes vor:<ul><li>Die Steuer Obst, Gemüse, Hülsenfrüchte und Nüsse soll bei 7% bleiben.</li><li>Die Steuer auf Fleisch und Wurst, Fisch, Milchprodukte und Eier soll von 7% auf 19% erhöht werden.</li></ul></b><br><div style='text-align: center;'><img src='img/increase.png'/></div>",
+                                            "html": "<b>Die Steueränderung sieht folgendes vor:<ul><li>Die Steuer auf Obst, Gemüse, Hülsenfrüchte und Nüsse soll bei 7% bleiben.</li><li>Die Steuer auf Fleisch und Wurst, Fisch, Milchprodukte und Eier soll von 7% auf 19% erhöht werden.</li></ul></b><br><div style='text-align: center; '><img src='img/increase.png' style='max-width: 500px; width: 100%;'/></div>",
                                             "startWithNewLine": true,
                                             "visibleIf": "{condition} = increase"
                                         },
                                         {
                                             "type": "html",
                                             "name": "policy-decrease",
-                                            "html": "<b>Die Steueränderung sieht folgendes vor:<ul><li>Die Steuer auf Obst, Gemüse, Hülsenfrüchte und Nüsse soll von 7% auf 0% gesenkt werden.</li><li>Die Steuer auf Fleisch und Wurst, Fisch, Milchprodukte und Eier soll bei 7% bleiben.</li></ul></b><br><div style='text-align: center;'><img src='img/decrease.png'/></div>",
+                                            "html": "<b>Die Steueränderung sieht folgendes vor:<ul><li>Die Steuer auf Obst, Gemüse, Hülsenfrüchte und Nüsse soll von 7% auf 0% gesenkt werden.</li><li>Die Steuer auf Fleisch und Wurst, Fisch, Milchprodukte und Eier soll bei 7% bleiben.</li></ul></b><br><div style='text-align: center; '><img src='img/decrease.png' style='max-width: 500px; width: 100%;'/></div>",
                                             "startWithNewLine": true,
                                             "visibleIf": "{condition} = 'decrease'"
                                         },
                                         {
                                             "type": "html",
                                             "name": "policy-combo",
-                                            "html": "<b>Die Steueränderung sieht folgendes vor:<ul><li>Die Steuer auf Obst, Gemüse, Hülsenfrüchte und Nüsse soll von 7% auf 0% gesenkt werden.</li><li>Die Steuer auf Fleisch und Wurst, Fisch, Milchprodukte und Eier soll von 7% auf 19% erhöht werden.</li></ul></b><br><div style='text-align: center;'><img src='img/combo.png'/></div>",
+                                            "html": "<b>Die Steueränderung sieht folgendes vor:<ul><li>Die Steuer auf Obst, Gemüse, Hülsenfrüchte und Nüsse soll von 7% auf 0% gesenkt werden.</li><li>Die Steuer auf Fleisch und Wurst, Fisch, Milchprodukte und Eier soll von 7% auf 19% erhöht werden.</li></ul></b><br><div style='text-align: center; '><img src='img/combo.png' style='max-width: 500px; width: 100%;'/></div>",
                                             "startWithNewLine": true,
                                             "visibleIf": "{condition} = 'combo'"
                                         }]
+                                },
+                                {
+                                    "type": "panel",
+                                    "title": "**Wie hoch wäre die Mehrwertsteuer für folgende Lebensmittel, wenn die beschriebene Steueränderung umgesetzt wird?**",
+                                    elements: [
+                                        {
+                                            "type": "radiogroup",
+                                            "name": "mc_dairy",
+                                            "title": "**Joghurt**",
+                                            "isRequired": true,
+                                            "colCount": 0,
+                                            "choices": ["0%", "7%", "19%"]
+                                        },
+                                        {
+                                            "type": "radiogroup",
+                                            "name": "mc_meat",
+                                            "title": "**Hackfleisch**",
+                                            "isRequired": true,
+                                            "colCount": 0,
+                                            "choices": ["0%", "7%", "19%"]
+                                        },
+                                        {
+                                            "type": "radiogroup",
+                                            "name": "mc_vegetable",
+                                            "title": "**Paprika**",
+                                            "isRequired": true,
+                                            "colCount": 0,
+                                            "choices": ["0%", "7%", "19%"]
+                                        },
+                                        {
+                                            "type": "radiogroup",
+                                            "name": "mc_nuts",
+                                            "title": "**Walnüsse**",
+                                            "isRequired": true,
+                                            "colCount": 0,
+                                            "choices": ["0%", "7%", "19%"]
+                                        }
+                                    ]
+
+
                                 },
                                 {
                                     "type": "panel",
@@ -412,21 +456,10 @@
                             name: "other",
                             elements: [
                                 {
-                                 "type": "panel",
-                                 "title": "**Abschließend geht es um die Auswirkungen der vorgestellten Steueränderung** ("+condition_description+").",
-                                    "elements" : [
-                           
-                                {
-                                            "type": "rating",
-                                            "name": "effect_environment",
-                                            "title": "**Wie stark fördert die Steueränderung Ihrer Meinung nach den Klima- und Umweltschutz?**",
-                                            "minRateDescription": "überhaupt nicht",
-                                            "maxRateDescription": "sehr",
-                                            "rateMin": 1,
-                                            "rateMax": 7,
-                                            "isRequired": true
-                                },
-                                 {
+                                    "type": "panel",
+                                    "title": "**Abschließend geht es um die Auswirkungen der vorgestellten Steueränderung** (" + condition_description + ").",
+                                    "elements": [
+                                        {
                                             "type": "rating",
                                             "name": "effect_health",
                                             "title": "**Wie stark fördert die Steueränderung Ihrer Meinung nach die Gesundheit der Menschen in Deutschland?**",
@@ -435,31 +468,44 @@
                                             "rateMin": 1,
                                             "rateMax": 7,
                                             "isRequired": true
-                                }]},
-                                  {
-                                 "type": "panel",
-                                 "title": "**Nun haben wir noch 3 Fragen zu Ihrer Person.**",
-                                    "elements" : [
-                                {
-                                    "type": "boolean",
-                                    "name": "meat",
-                                    "title": "**Essen Sie aktuell Fleisch, Wurst und/oder Fisch?**",
-                                    "valueTrue": "Ja",
-                                    "valueFalse": "Nein",
-                                    "renderAs": "radio",
-                                    "swapOrder": true,
-                                    "isRequired": true
+                                        },
+
+                                        {
+                                            "type": "rating",
+                                            "name": "effect_environment",
+                                            "title": "**Wie stark fördert die Steueränderung Ihrer Meinung nach den Klima- und Umweltschutz?**",
+                                            "minRateDescription": "überhaupt nicht",
+                                            "maxRateDescription": "sehr",
+                                            "rateMin": 1,
+                                            "rateMax": 7,
+                                            "isRequired": true
+                                        }
+                                    ]
                                 },
-                                 {
-                                    "type": "boolean",
-                                    "name": "dairyeaggs",
-                                    "title": "**Essen Sie aktuell Milchprodukte und/oder Eier?**",
-                                    "valueTrue": "Ja",
-                                    "valueFalse": "Nein",
-                                    "renderAs": "radio",
-                                    "swapOrder": true,
-                                    "isRequired": true
-                                }, {
+                                {
+                                    "type": "panel",
+                                    "title": "**Nun haben wir noch 4 Fragen zu Ihrer Person.**",
+                                    "elements": [
+                                        {
+                                            "type": "boolean",
+                                            "name": "meat",
+                                            "title": "**Essen Sie Fleisch, Wurst und/oder Fisch?**",
+                                            "valueTrue": "Ja",
+                                            "valueFalse": "Nein",
+                                            "renderAs": "radio",
+                                            "swapOrder": true,
+                                            "isRequired": true
+                                        },
+                                        {
+                                            "type": "boolean",
+                                            "name": "dairyeaggs",
+                                            "title": "**Essen Sie Milchprodukte und/oder Eier?**",
+                                            "valueTrue": "Ja",
+                                            "valueFalse": "Nein",
+                                            "renderAs": "radio",
+                                            "swapOrder": true,
+                                            "isRequired": true
+                                        }, {
                                             "type": "rating",
                                             "name": "motive_health",
                                             "title": "**Wie sehr achten Sie auf gesunde Ernährung?**",
@@ -468,7 +514,17 @@
                                             "rateMin": 1,
                                             "rateMax": 7,
                                             "isRequired": true
-                                }]}
+                                        }, {
+                                            "type": "rating",
+                                            "name": "motive_environment",
+                                            "title": "**Wie sehr achten Sie auf nachhhaltige Ernährung?**",
+                                            "minRateDescription": "überhaupt nicht",
+                                            "maxRateDescription": "sehr",
+                                            "rateMin": 1,
+                                            "rateMax": 7,
+                                            "isRequired": true
+                                        }]
+                                }
                             ]
                         },
                     ]
@@ -492,24 +548,49 @@
                     options.html = str;
                 });
 
+                var errors_dairy = false;
+                var errors_meat = false;
+                var errors_vegetable = false;
+                var errors_nuts = false;
+
+                survey.setValue("errors_dairy", false);
+                survey.setValue("errors_meat", false);
+                survey.setValue("errors_vegetable", false);
+                survey.setValue("errors_nuts", false);
+
                 survey.onValidateQuestion.add(function (sender, options) {
                     if (options.name === "consent" && options.value === false) {
                         options.error = "Eine Teilnahme an der Umfrage erfordert Ihre Einwilligung.";
                     }
 
                     if (options.name === "nostrike") {
-                        
-                        if (((options.value === undefined) || (options.value === false)) && (numberOfStrikedProducts == 0)){
-                            options.error = "Sie haben keine Produkte gestrichen. Wenn Sie keine Produkte streichen wollen, setzen Sie hier bitte einen Haken.";
+
+                        if (((options.value === undefined) || (options.value === false)) && (numberOfStrikedProducts == 0)) {
+                            options.error = "Sie haben keine Produkte gestrichen. Wenn Sie keine Produkte streichen wollen, setzen Sie hier bitte einen Haken. Alternativ klicken Sie oben auf Produkte, um sie zu streichen.";
                         }
 
-                        if ((options.value === true) && (numberOfStrikedProducts > 0)){
-                            options.error = "Sie haben Produkte gestrichen. Bitte entfernen Sie hier den Haken.";
+                        if ((options.value === true) && (numberOfStrikedProducts > 0)) {
+                            options.error = "Sie haben Produkte gestrichen. Bitte entfernen Sie hier den Haken oder heben Sie oben die Streichung auf, indem Sie auf gestrichene Produkte klicken.";
                         }
-
-                        
                     }
 
+                    if ((options.name === "mc_dairy" || options.name === "mc_meat" ) && ((options.value !== "19%" && (condition == "increase" || condition == "combo")) || (options.value !== "7%" && condition == "decrease"))) {
+                        options.error = "Falsche Antwort. Bitte wählen Sie die korrekte Mehrwertsteuer für dieses Produkt aus, wenn die Steueränderung umgesetzt wird.";
+                        if (options.name === "mc_dairy") {
+                            survey.setValue("errors_dairy", true);
+                        } else if (options.name === "mc_meat") {
+                            survey.setValue("errors_meat", true);    
+                        }
+                    }
+
+                    if ((options.name === "mc_vegetable" || options.name === "mc_nuts" ) && ((options.value !== "0%" && (condition == "decrease" || condition == "combo")) || (options.value !== "7%" && condition == "increase"))) {
+                        options.error = "Falsche Antwort.Bitte wählen Sie die korrekte Mehrwertsteuer für dieses Produkt aus, wenn die Steueränderung umgesetzt wird.";
+                        if (options.name === "mc_vegetable") {
+                            survey.setValue("errors_vegetable", true);
+                        } else if (options.name === "mc_nuts") {
+                            survey.setValue("errors_nuts", true);
+                        }
+                    }
                 });
 
                 survey.onAfterRenderQuestion.add(function (survey, options) {
