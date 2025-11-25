@@ -204,7 +204,7 @@
                                 {
                                     "type": "html",
                                     "name": "briefing",
-                                    "html": "<h3>Willkommen zurück!</h3><p>Schön, dass Sie wieder an einer Umfrage der Universität Bamberg teilnehmen. <b>Sie haben uns vor einigen Wochen einen Kassenzettel geschickt. In dieser Umfrage möchten wir noch einmal darauf eingehen und Ihre Meinung zu einer möglichen Veränderung der Mehrwertsteuer auf Lebensmittel erfassen.</b> Die Teilnahme wird rund 5 Minuten dauern, ist freiwillig und kann jederzeit abgebrochen werden.</p><p>Ihre Angaben werden für wissenschaftliche Zwecke erhoben und können in anonymisierter Form dauerhaft in einem öffentlichen Repositorium abgelegt werden. Ein Rückschluss auf Ihre Person ist dabei keinesfalls möglich. Weitere Informationen zur Datenverarbeitung finden Sie <a href='https://www.uni-bamberg.de/datenschutz/datenschutzinformationen/allgemeine-inhalte-datenschutzinformationen/', target='_blank'>hier</a>. Sie können Ihre Zustimmung zur Datenverarbeitung jederzeit per Email an philipp.sprengholz@uni-bamberg.de widerrufen.</p>",
+                                    "html": "<h3>Willkommen zurück!</h3><p>Schön, dass Sie wieder an einer Umfrage der Universität Bamberg teilnehmen. <b>Sie haben uns vor einigen Wochen einen Kassenzettel geschickt. In dieser Umfrage möchten wir näher darauf eingehen und Ihre Meinung zu einer möglichen Veränderung der Mehrwertsteuer auf Lebensmittel erfassen.</b> Die Teilnahme wird rund 5 Minuten dauern, ist freiwillig und kann jederzeit abgebrochen werden.</p><p>Ihre Angaben werden für wissenschaftliche Zwecke erhoben und können in anonymisierter Form dauerhaft in einem öffentlichen Repositorium abgelegt werden. Ein Rückschluss auf Ihre Person ist dabei keinesfalls möglich. Weitere Informationen zur Datenverarbeitung finden Sie <a href='https://www.uni-bamberg.de/datenschutz/datenschutzinformationen/allgemeine-inhalte-datenschutzinformationen/', target='_blank'>hier</a>. Sie können Ihre Zustimmung zur Datenverarbeitung jederzeit per Email an philipp.sprengholz@uni-bamberg.de widerrufen.</p>",
                                     "startWithNewLine": false
                                 },
                                 {
@@ -269,22 +269,6 @@
                                     elements: [
                                         {
                                             "type": "radiogroup",
-                                            "name": "mc_dairy",
-                                            "title": "**Joghurt**",
-                                            "isRequired": true,
-                                            "colCount": 0,
-                                            "choices": ["0%", "7%", "19%"]
-                                        },
-                                        {
-                                            "type": "radiogroup",
-                                            "name": "mc_meat",
-                                            "title": "**Hackfleisch**",
-                                            "isRequired": true,
-                                            "colCount": 0,
-                                            "choices": ["0%", "7%", "19%"]
-                                        },
-                                        {
-                                            "type": "radiogroup",
                                             "name": "mc_vegetable",
                                             "title": "**Paprika**",
                                             "isRequired": true,
@@ -295,6 +279,22 @@
                                             "type": "radiogroup",
                                             "name": "mc_nuts",
                                             "title": "**Walnüsse**",
+                                            "isRequired": true,
+                                            "colCount": 0,
+                                            "choices": ["0%", "7%", "19%"]
+                                        },
+                                        {
+                                            "type": "radiogroup",
+                                            "name": "mc_dairy",
+                                            "title": "**Joghurt**",
+                                            "isRequired": true,
+                                            "colCount": 0,
+                                            "choices": ["0%", "7%", "19%"]
+                                        },
+                                        {
+                                            "type": "radiogroup",
+                                            "name": "mc_meat",
+                                            "title": "**Hackfleisch**",
                                             "isRequired": true,
                                             "colCount": 0,
                                             "choices": ["0%", "7%", "19%"]
@@ -330,7 +330,7 @@
                                         {
                                             "type": "rating",
                                             "name": "pbconsumption_1",
-                                            "title": "**Wenn die Steueränderung umgesetzt würde, dann würde ich mehr Obst, Gemüse, Hülsenfrüchte und Nüsse essen.**",
+                                            "title": "**Wenn die Steueränderung umgesetzt wird, dann werde ich mehr Obst, Gemüse, Hülsenfrüchte und Nüsse essen.**",
                                             "minRateDescription": "stimme überhaupt nicht zu",
                                             "maxRateDescription": "stimme voll und ganz zu",
                                             "rateMin": 1,
@@ -340,7 +340,7 @@
                                         {
                                             "type": "rating",
                                             "name": "apconsumption_1",
-                                            "title": "**Wenn die Steueränderung umgesetzt würde, dann würde ich weniger Fleisch und Wurst, Fisch, Milchprodukte und Eier essen.**",
+                                            "title": "**Wenn die Steueränderung umgesetzt wird, dann werde ich weniger Fleisch und Wurst, Fisch, Milchprodukte und Eier essen.**",
                                             "minRateDescription": "stimme überhaupt nicht zu",
                                             "maxRateDescription": "stimme voll und ganz zu",
                                             "rateMin": 1,
@@ -714,7 +714,7 @@
                     );
                     console.log("✔ JSONBin done");
 
-                    window.location.href = "https://www.prolific.com/";
+                    window.location.href = "https://app.prolific.com/submissions/complete?cc=CBSIJK9C";
 
                 }
 
